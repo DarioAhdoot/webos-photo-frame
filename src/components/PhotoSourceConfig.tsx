@@ -42,7 +42,7 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
       </div>
 
       {photoSources.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-dark-muted">
           <div className="text-4xl mb-4">📁</div>
           <div>No photo sources configured</div>
           <div className="text-sm mt-2">Add a source to get started</div>
@@ -50,7 +50,7 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
       ) : (
         <div className="space-y-4">
           {photoSources.map((source) => (
-            <div key={source.id} className="bg-white p-4 rounded-lg border shadow-sm">
+            <div key={source.id} className="bg-dark-card p-4 rounded-lg border border-dark-border shadow-sm">
               <div className="flex justify-between items-start mb-3">
                 <div className="flex-1 mr-4">
                   <input
@@ -60,7 +60,7 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
                     className="font-medium text-lg bg-transparent border-none p-0 w-full focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
                     placeholder="Source name"
                   />
-                  <div className="text-sm text-gray-500 capitalize">{source.type} server</div>
+                  <div className="text-sm text-dark-muted capitalize">{source.type} server</div>
                 </div>
                 <div className="flex gap-3 items-center">
                   <label className="flex items-center">
@@ -68,10 +68,10 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
                       type="checkbox"
                       checked={source.enabled}
                       onChange={(e) => updatePhotoSource(source.id, { enabled: e.target.checked })}
-                      className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-dark-border rounded"
                     />
                     <span className={`text-sm font-medium ${
-                      source.enabled ? 'text-green-700' : 'text-gray-500'
+                      source.enabled ? 'text-green-400' : 'text-dark-muted'
                     }`}>
                       {source.enabled ? 'Enabled' : 'Disabled'}
                     </span>
@@ -80,11 +80,11 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
                   {/* Configuration status indicator */}
                   <div className="text-xs">
                     {source.config && (source.config as ImmichConfig).serverUrl ? (
-                      <span className="text-green-600 bg-green-100 px-2 py-1 rounded">
+                      <span className="text-green-400 bg-green-900 px-2 py-1 rounded">
                         Configured
                       </span>
                     ) : (
-                      <span className="text-amber-600 bg-amber-100 px-2 py-1 rounded">
+                      <span className="text-amber-400 bg-amber-900 px-2 py-1 rounded">
                         Setup Required
                       </span>
                     )}
@@ -92,7 +92,7 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
                   
                   <button
                     onClick={() => removePhotoSource(source.id)}
-                    className="text-red-600 hover:text-red-800 text-sm px-2 py-1 rounded hover:bg-red-50"
+                    className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-900"
                   >
                     Remove
                   </button>
@@ -113,28 +113,28 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Add Photo Source</h3>
+          <div className="bg-dark-card rounded-lg p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4 text-dark-text">Add Photo Source</h3>
             <div className="space-y-3">
               <button
                 onClick={handleAddImmichSource}
-                className="w-full p-3 text-left border rounded-lg hover:bg-gray-50"
+                className="w-full p-3 text-left border border-dark-border rounded-lg hover:bg-gray-700"
               >
-                <div className="font-medium">Immich Server</div>
-                <div className="text-sm text-gray-500">Connect to your Immich instance</div>
+                <div className="font-medium text-dark-text">Immich Server</div>
+                <div className="text-sm text-dark-muted">Connect to your Immich instance</div>
               </button>
               <button
                 disabled
-                className="w-full p-3 text-left border rounded-lg opacity-50 cursor-not-allowed"
+                className="w-full p-3 text-left border border-dark-border rounded-lg opacity-50 cursor-not-allowed"
               >
-                <div className="font-medium">Google Photos</div>
-                <div className="text-sm text-gray-500">Coming soon</div>
+                <div className="font-medium text-dark-text">Google Photos</div>
+                <div className="text-sm text-dark-muted">Coming soon</div>
               </button>
             </div>
             <div className="flex gap-2 mt-6">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-dark-border rounded-lg hover:bg-gray-700 text-dark-text"
               >
                 Cancel
               </button>
@@ -220,50 +220,50 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
   const getSaveButtonClass = () => {
     const baseClass = 'px-4 py-2 rounded-md text-sm font-medium '
     switch (saveStatus) {
-      case 'saving': return baseClass + 'bg-gray-400 text-white cursor-not-allowed'
+      case 'saving': return baseClass + 'bg-gray-500 text-white cursor-not-allowed'
       case 'saved': return baseClass + 'bg-green-600 text-white'
       case 'error': return baseClass + 'bg-red-600 text-white'
       default: return hasUnsavedChanges 
         ? baseClass + 'bg-blue-600 text-white hover:bg-blue-700'
-        : baseClass + 'bg-gray-200 text-gray-500 cursor-default'
+        : baseClass + 'bg-gray-600 text-dark-muted cursor-default'
     }
   }
 
   const getConnectionStatus = () => {
-    if (testConnection.isLoading) return { text: 'Testing...', class: 'text-yellow-600', detail: null }
+    if (testConnection.isLoading) return { text: 'Testing...', class: 'text-yellow-400', detail: null }
     if (testConnection.isError) {
       const errorMessage = testConnection.error?.message || 'Unknown error'
       return { 
         text: 'Connection failed', 
-        class: 'text-red-600',
+        class: 'text-red-400',
         detail: errorMessage
       }
     }
-    if (testConnection.data === true) return { text: 'Connected ✓', class: 'text-green-600', detail: null }
-    if (testConnection.data === false) return { text: 'Connection failed', class: 'text-red-600', detail: null }
-    return { text: 'Not tested', class: 'text-gray-500', detail: null }
+    if (testConnection.data === true) return { text: 'Connected ✓', class: 'text-green-400', detail: null }
+    if (testConnection.data === false) return { text: 'Connection failed', class: 'text-red-400', detail: null }
+    return { text: 'Not tested', class: 'text-dark-muted', detail: null }
   }
 
   const connectionStatus = getConnectionStatus()
 
   return (
-    <div className="space-y-4 pt-3 border-t">
+    <div className="space-y-4 pt-3 border-t border-dark-border">
       <div>
-        <label className="block text-sm font-medium mb-1">Server URL</label>
+        <label className="block text-sm font-medium mb-1 text-dark-text">Server URL</label>
         <input
           type="url"
           value={localConfig.serverUrl}
           onChange={(e) => updateLocalConfig({ serverUrl: e.target.value })}
           placeholder="http://your-server.com:2283"
-          className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
         />
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-dark-muted mt-1">
           Enter your Immich server URL (without /api path). Example: http://diarrhio.mooo.com:2283
         </div>
       </div>
       
       <div>
-        <label className="block text-sm font-medium mb-2">Authentication Method</label>
+        <label className="block text-sm font-medium mb-2 text-dark-text">Authentication Method</label>
         <div className="flex gap-4 mb-3">
           <label className="flex items-center">
             <input
@@ -272,9 +272,9 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
               value="apiKey"
               checked={authType === 'apiKey'}
               onChange={() => handleAuthTypeChange('apiKey')}
-              className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+              className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-dark-border"
             />
-            <span className="text-sm">API Key</span>
+            <span className="text-sm text-dark-text">API Key</span>
           </label>
           <label className="flex items-center">
             <input
@@ -283,46 +283,46 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
               value="password"
               checked={authType === 'password'}
               onChange={() => handleAuthTypeChange('password')}
-              className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+              className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-dark-border"
             />
-            <span className="text-sm">Username & Password</span>
+            <span className="text-sm text-dark-text">Username & Password</span>
           </label>
         </div>
         
         {authType === 'apiKey' ? (
           <div>
-            <label className="block text-sm font-medium mb-1">API Key</label>
+            <label className="block text-sm font-medium mb-1 text-dark-text">API Key</label>
             <input
               type="password"
               value={localConfig.apiKey || ''}
               onChange={(e) => updateLocalConfig({ apiKey: e.target.value })}
               placeholder="Your Immich API key"
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
             />
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-dark-muted mt-1">
               Create an API key in your Immich user settings
             </div>
           </div>
         ) : (
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Username (Email)</label>
+              <label className="block text-sm font-medium mb-1 text-dark-text">Username (Email)</label>
               <input
                 type="email"
                 value={localConfig.username || ''}
                 onChange={(e) => updateLocalConfig({ username: e.target.value })}
                 placeholder="your-email@example.com"
-                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Password</label>
+              <label className="block text-sm font-medium mb-1 text-dark-text">Password</label>
               <input
                 type="password"
                 value={localConfig.password || ''}
                 onChange={(e) => updateLocalConfig({ password: e.target.value })}
                 placeholder="Your Immich password"
-                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
               />
             </div>
           </div>
@@ -330,7 +330,7 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
       </div>
       
       <div>
-        <label className="block text-sm font-medium mb-1">Albums</label>
+        <label className="block text-sm font-medium mb-1 text-dark-text">Albums</label>
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -343,11 +343,11 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
             disabled={!localConfig.serverUrl || 
               (authType === 'apiKey' && !localConfig.apiKey) ||
               (authType === 'password' && (!localConfig.username || !localConfig.password))}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border border-dark-border rounded-md text-sm font-medium text-dark-text hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Select Albums ({localConfig.albumIds.length} selected)
           </button>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-dark-muted">
             {localConfig.albumIds.length === 0 ? 'All albums will be used' : `${localConfig.albumIds.length} album${localConfig.albumIds.length !== 1 ? 's' : ''} selected`}
           </div>
         </div>
@@ -368,7 +368,7 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
           disabled={testConnection.isLoading || !localConfig.serverUrl || 
             (authType === 'apiKey' && !localConfig.apiKey) ||
             (authType === 'password' && (!localConfig.username || !localConfig.password))}
-          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 border border-dark-border rounded-md text-sm font-medium text-dark-text hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {testConnection.isLoading ? 'Testing...' : 'Test Connection'}
         </button>
@@ -378,7 +378,7 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
             {connectionStatus.text}
           </span>
           {connectionStatus.detail && (
-            <span className="text-xs text-red-500 mt-1 max-w-xs">
+            <span className="text-xs text-red-400 mt-1 max-w-xs">
               {connectionStatus.detail}
             </span>
           )}
@@ -386,7 +386,7 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
       </div>
       
       {hasUnsavedChanges && (
-        <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+        <div className="text-xs text-amber-400 bg-amber-900 p-2 rounded">
           💡 You have unsaved changes. Click "Save Changes" to apply them.
         </div>
       )}

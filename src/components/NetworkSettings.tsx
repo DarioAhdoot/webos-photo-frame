@@ -24,7 +24,7 @@ export default function NetworkSettings() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Photo Refresh Settings</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+        <div className="bg-dark-card p-6 rounded-lg border border-dark-border shadow-sm space-y-4">
           <div>
             <label className="block text-sm font-medium mb-3">Auto-refresh Photos</label>
             <div className="flex items-center gap-4">
@@ -34,7 +34,7 @@ export default function NetworkSettings() {
                   const newValue = current <= 1 ? 1 : current <= 6 ? current - 1 : current <= 24 ? current - 6 : current - 24
                   handleNetworkChange('refreshIntervalHours', Math.max(1, newValue))
                 }}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                className="px-3 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-lg font-bold"
                 disabled={settings.network.refreshIntervalHours <= 1}
               >
                 ◀
@@ -51,13 +51,13 @@ export default function NetworkSettings() {
                   const newValue = current < 6 ? current + 1 : current < 24 ? current + 6 : current + 24
                   handleNetworkChange('refreshIntervalHours', Math.min(168, newValue))
                 }}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                className="px-3 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-lg font-bold"
                 disabled={settings.network.refreshIntervalHours >= 168}
               >
                 ▶
               </button>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-dark-muted mt-2">
               How often to automatically fetch new photos from your sources
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function NetworkSettings() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Cache Settings</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
+        <div className="bg-dark-card p-6 rounded-lg border border-dark-border shadow-sm">
           <div>
             <label className="block text-sm font-medium mb-3">Cache Size</label>
             <div className="flex items-center gap-4">
@@ -84,7 +84,7 @@ export default function NetworkSettings() {
                   const decrement = current <= 100 ? 10 : current <= 500 ? 50 : 100
                   handleNetworkChange('maxSizeMB', Math.max(10, current - decrement))
                 }}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                className="px-3 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-lg font-bold"
                 disabled={settings.network.maxSizeMB <= 10}
               >
                 ◀
@@ -98,13 +98,13 @@ export default function NetworkSettings() {
                   const increment = current < 100 ? 10 : current < 500 ? 50 : 100
                   handleNetworkChange('maxSizeMB', Math.min(1000, current + increment))
                 }}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                className="px-3 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-lg font-bold"
                 disabled={settings.network.maxSizeMB >= 1000}
               >
                 ▶
               </button>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-dark-muted mt-2">
               Amount of storage to use for caching photos locally
             </div>
           </div>

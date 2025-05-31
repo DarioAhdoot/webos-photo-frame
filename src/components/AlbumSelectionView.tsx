@@ -117,14 +117,14 @@ export default function AlbumSelectionView({
 
   if (loading) {
     return (
-      <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-        <div className="flex-shrink-0 bg-white shadow-sm border-b p-6">
+      <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
+        <div className="flex-shrink-0 bg-dark-card shadow-sm border-b p-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold">Select Albums</h1>
+              <h1 className="text-2xl font-bold text-dark-text">Select Albums</h1>
               <button
                 onClick={onBack}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-dark-muted hover:text-dark-text"
               >
                 ← Back
               </button>
@@ -137,8 +137,8 @@ export default function AlbumSelectionView({
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
                 <div className="text-4xl mb-4 animate-pulse">📷</div>
-                <div className="text-lg">Loading albums...</div>
-                <div className="text-sm text-gray-500 mt-2">Fetching from {photoSource.name}</div>
+                <div className="text-lg text-dark-text">Loading albums...</div>
+                <div className="text-sm text-dark-muted mt-2">Fetching from {photoSource.name}</div>
               </div>
             </div>
           </div>
@@ -149,14 +149,14 @@ export default function AlbumSelectionView({
 
   if (error) {
     return (
-      <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-        <div className="flex-shrink-0 bg-white shadow-sm border-b p-6">
+      <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
+        <div className="flex-shrink-0 bg-dark-card shadow-sm border-b p-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold">Select Albums</h1>
+              <h1 className="text-2xl font-bold text-dark-text">Select Albums</h1>
               <button
                 onClick={onBack}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-dark-muted hover:text-dark-text"
               >
                 ← Back
               </button>
@@ -169,8 +169,8 @@ export default function AlbumSelectionView({
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
                 <div className="text-4xl mb-4">⚠️</div>
-                <div className="text-lg">Failed to load albums</div>
-                <div className="text-sm text-gray-500 mt-2">{error}</div>
+                <div className="text-lg text-dark-text">Failed to load albums</div>
+                <div className="text-sm text-dark-muted mt-2">{error}</div>
                 <button
                   onClick={loadAlbums}
                   className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -186,13 +186,13 @@ export default function AlbumSelectionView({
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-      <div className="flex-shrink-0 bg-white shadow-sm border-b p-6">
+    <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
+      <div className="flex-shrink-0 bg-dark-card shadow-sm border-b p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold">Select Albums</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-2xl font-bold text-dark-text">Select Albums</h1>
+              <p className="text-dark-muted mt-1">
                 Choose albums from {photoSource.name} • {selectedAlbumIds.length} selected
               </p>
             </div>
@@ -201,14 +201,14 @@ export default function AlbumSelectionView({
                 <>
                   <button
                     onClick={handleSelectAll}
-                    className="px-3 py-2 text-blue-600 hover:bg-blue-50 rounded border border-blue-200"
+                    className="px-3 py-2 text-blue-400 hover:bg-blue-900/20 rounded border border-blue-400/30"
                     disabled={selectedAlbumIds.length === albums.length}
                   >
                     Select All
                   </button>
                   <button
                     onClick={handleDeselectAll}
-                    className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded border border-gray-200"
+                    className="px-3 py-2 text-dark-muted hover:bg-gray-600 rounded border border-dark-border"
                     disabled={selectedAlbumIds.length === 0}
                   >
                     Deselect All
@@ -217,7 +217,7 @@ export default function AlbumSelectionView({
               )}
               <button
                 onClick={onBack}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-dark-muted hover:text-dark-text"
               >
                 ← Back
               </button>
@@ -237,8 +237,8 @@ export default function AlbumSelectionView({
           {albums.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-4xl mb-4">📷</div>
-              <div className="text-lg">No albums found</div>
-              <div className="text-sm text-gray-500 mt-2">
+              <div className="text-lg text-dark-text">No albums found</div>
+              <div className="text-sm text-dark-muted mt-2">
                 This photo source doesn't have any albums
               </div>
             </div>
@@ -250,11 +250,11 @@ export default function AlbumSelectionView({
                   onClick={() => handleAlbumClick(album.id)}
                   className={`relative cursor-pointer group rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                     isAlbumSelected(album.id)
-                      ? 'border-blue-500 ring-2 ring-blue-200'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-blue-400 ring-2 ring-blue-400/30'
+                      : 'border-dark-border hover:border-gray-500'
                   }`}
                 >
-                  <div className="aspect-square bg-gray-100 flex items-center justify-center">
+                  <div className="aspect-square bg-gray-600 flex items-center justify-center">
                     {thumbnailBlobUrls[album.id] ? (
                       <img
                         src={thumbnailBlobUrls[album.id]}
@@ -271,7 +271,7 @@ export default function AlbumSelectionView({
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                         isAlbumSelected(album.id)
                           ? 'bg-blue-500 border-blue-500'
-                          : 'bg-white border-gray-300 group-hover:border-gray-400'
+                          : 'bg-dark-card border-dark-border group-hover:border-gray-500'
                       }`}
                     >
                       {isAlbumSelected(album.id) && (
@@ -290,15 +290,15 @@ export default function AlbumSelectionView({
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white">
-                    <h3 className="font-medium text-sm truncate" title={album.name}>
+                  <div className="p-3 bg-dark-card">
+                    <h3 className="font-medium text-sm truncate text-dark-text" title={album.name}>
                       {album.name}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-dark-muted mt-1">
                       {album.photoCount} photo{album.photoCount !== 1 ? 's' : ''}
                     </p>
                     {album.description && (
-                      <p className="text-xs text-gray-400 mt-1 line-clamp-2" title={album.description}>
+                      <p className="text-xs text-dark-muted/70 mt-1 line-clamp-2" title={album.description}>
                         {album.description}
                       </p>
                     )}

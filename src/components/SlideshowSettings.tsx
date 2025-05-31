@@ -18,7 +18,7 @@ export default function SlideshowSettings() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Slideshow Settings</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+        <div className="bg-dark-card p-6 rounded-lg border-dark-border shadow-sm space-y-4">
           <div>
             <label className="block text-sm font-medium mb-3">Photo Interval</label>
             <div className="flex items-center gap-4">
@@ -28,7 +28,7 @@ export default function SlideshowSettings() {
                   const decrement = current > 30 ? 5 : 1
                   handleSlideshowChange('interval', Math.max(1, current - decrement))
                 }}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                className="px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-lg font-bold"
                 disabled={settings.slideshow.interval <= 1}
               >
                 ◀
@@ -42,13 +42,13 @@ export default function SlideshowSettings() {
                   const increment = current >= 30 ? 5 : 1
                   handleSlideshowChange('interval', Math.min(60, current + increment))
                 }}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                className="px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-lg font-bold"
                 disabled={settings.slideshow.interval >= 60}
               >
                 ▶
               </button>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-dark-muted mt-2">
               How long to display each photo
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function SlideshowSettings() {
                 <span>None</span>
               </label>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-dark-muted mt-2">
               Ken Burns adds subtle zoom and pan effects like Apple TV screensavers
             </div>
           </div>

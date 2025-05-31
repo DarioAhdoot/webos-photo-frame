@@ -26,7 +26,7 @@ export default function DisplaySettings() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Image Quality Settings</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
+        <div className="bg-dark-card p-6 rounded-lg border-dark-border shadow-sm">
           <div>
             <label className="block text-sm font-medium mb-3">Image Resolution</label>
             <div className="flex gap-6">
@@ -53,7 +53,7 @@ export default function DisplaySettings() {
                 <span>Original</span>
               </label>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-dark-muted mt-2">
               Optimized provides faster loading with preview quality, Original uses full resolution
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function DisplaySettings() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Display Options</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+        <div className="bg-dark-card p-6 rounded-lg border-dark-border shadow-sm space-y-4">
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -89,7 +89,7 @@ export default function DisplaySettings() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Layout Settings</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
+        <div className="bg-dark-card p-6 rounded-lg border-dark-border shadow-sm">
           <div>
             <label className="block text-sm font-medium mb-3">Portrait Photo Layout</label>
             <div className="flex gap-6 flex-wrap">
@@ -127,7 +127,7 @@ export default function DisplaySettings() {
                 <span>Photo with Blurred Background</span>
               </label>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-dark-muted mt-2">
               How to display portrait-oriented photos
             </div>
           </div>

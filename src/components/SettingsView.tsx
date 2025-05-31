@@ -117,15 +117,15 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   }
 
   return (
-    <div className="h-screen bg-gray-100 flex flex-col">
-      <header className="bg-white shadow-sm border-b p-4">
+    <div className="h-screen bg-dark-bg flex flex-col">
+      <header className="bg-dark-card shadow-sm border-b border-dark-border p-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Photo Screensaver Settings</h1>
+          <h1 className="text-2xl font-bold text-dark-text">Photo Screensaver Settings</h1>
           <div className="flex gap-3 items-center">
             {/* Debug info */}
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-dark-muted">
               Sources: {photoSources.length} | Enabled: {photoSources.filter(s => s.enabled).length} | Photos: {photoCount} | Videos: {videoCount}
-              {allPhotosQuery.isFetching && <span className="ml-2 text-blue-500">(refreshing...)</span>}
+              {allPhotosQuery.isFetching && <span className="ml-2 text-blue-400">(refreshing...)</span>}
             </div>
             
             <button
@@ -142,7 +142,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
               className={`px-6 py-2 rounded-lg font-medium ${
                 hasConfiguredSources
                   ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
               }`}
               title={!hasConfiguredSources ? 'Enable at least one photo source first' : ''}
             >
@@ -153,15 +153,15 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
       </header>
 
       <div className="flex-1 flex min-h-0">
-        <nav className="w-64 bg-white shadow-sm border-r">
+        <nav className="w-64 bg-dark-card shadow-sm border-r border-dark-border">
           <div className="p-4">
             <div className="space-y-2">
               <button
                 onClick={() => setActiveTab('sources')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
                   activeTab === 'sources'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
                 Photo Sources
@@ -170,8 +170,8 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                 onClick={() => setActiveTab('slideshow')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
                   activeTab === 'slideshow'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
                 Slideshow Settings
@@ -180,8 +180,8 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                 onClick={() => setActiveTab('video')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
                   activeTab === 'video'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
                 Video Settings
@@ -190,8 +190,8 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                 onClick={() => setActiveTab('display')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
                   activeTab === 'display'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
                 Display Settings
@@ -200,8 +200,8 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                 onClick={() => setActiveTab('network')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
                   activeTab === 'network'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
                 Network Settings
@@ -210,7 +210,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
           </div>
         </nav>
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-dark-bg">
           <div className="p-6">
             {activeTab === 'sources' && <PhotoSourceConfig onOpenAlbumSelection={handleOpenAlbumSelection} />}
             {activeTab === 'slideshow' && <SlideshowSettings />}

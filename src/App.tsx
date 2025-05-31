@@ -8,6 +8,11 @@ function App() {
   const { currentMode, userRequestedSettings, setCurrentMode } = useAppStore()
   const { photoSources } = useSettingsStore()
   
+  // Enable dark mode
+  useEffect(() => {
+    document.documentElement.classList.add('dark')
+  }, [])
+  
   // Auto-launch into screensaver if photo sources exist (unless user explicitly requested settings)
   useEffect(() => {
     const enabledPhotoSources = photoSources.filter(source => source.enabled)
@@ -27,7 +32,7 @@ function App() {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden">
+    <div className="h-screen w-screen overflow-hidden bg-dark-bg text-dark-text">
       {currentMode === 'settings' ? (
         <SettingsView onStartScreensaver={handleStartScreensaver} />
       ) : (

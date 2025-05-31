@@ -4,8 +4,18 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        dark: {
+          bg: '#222222',
+          card: '#2a2a2a',
+          border: '#404040',
+          text: '#e5e5e5',
+          muted: '#a0a0a0',
+        },
+      },
       animation: {
         'fade-in': 'fadeIn 1s ease-in-out',
         'slide-left': 'slideLeft 1s ease-in-out',

@@ -24,7 +24,7 @@ export default function VideoSettings() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Video Settings</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+        <div className="bg-dark-card p-6 rounded-lg border border-dark-border shadow-sm space-y-4">
           <div>
             <label className="flex items-center">
               <input
@@ -35,7 +35,7 @@ export default function VideoSettings() {
               />
               <span className="font-medium">Show videos in slideshow</span>
             </label>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-dark-muted mt-1">
               Whether to include video files in the photo slideshow
             </div>
           </div>
@@ -68,7 +68,7 @@ export default function VideoSettings() {
                 <span>Limit Duration (uses photo interval of {settings.slideshow.interval}s)</span>
               </label>
             </div>
-            <div className="text-xs text-gray-500 mt-2">
+            <div className="text-xs text-dark-muted mt-2">
               Whether to play videos completely or limit to a maximum duration
             </div>
           </div>
@@ -83,7 +83,7 @@ export default function VideoSettings() {
               />
               <span>Mute video audio</span>
             </label>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-dark-muted mt-1">
               Whether videos should play with or without sound
             </div>
           </div>

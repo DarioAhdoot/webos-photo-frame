@@ -12,6 +12,8 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #222222;
+    color: #e5e5e5;
   }
 
   * {
@@ -41,7 +43,7 @@
   }
 
   .settings-content {
-    @apply bg-white rounded-lg p-6 max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto;
+    @apply bg-gray-800 text-gray-100 rounded-lg p-6 max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto;
   }
   
   /* Ken Burns animation - runs once for the duration of each photo */
