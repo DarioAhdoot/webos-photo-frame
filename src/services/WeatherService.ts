@@ -1,4 +1,4 @@
-import { GeolocationService, type LocationData } from './GeolocationService'
+import { GeolocationService } from './GeolocationService'
 
 export interface WeatherData {
   temperature: number

@@ -19,6 +19,8 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
       config: {
         serverUrl: '',
         apiKey: '',
+        username: '',
+        password: '',
         albumIds: [],
       } as ImmichConfig,
       enabled: false,
@@ -154,6 +156,12 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
   const [localConfig, setLocalConfig] = useState<ImmichConfig>(source.config as ImmichConfig)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [authType, setAuthType] = useState<'apiKey' | 'password'>(() => {
+    // Determine initial auth type based on existing config
+    if (localConfig.apiKey) return 'apiKey'
+    if (localConfig.username && localConfig.password) return 'password'
+    return 'apiKey' // default
+  })
   
   const testConnection = useTestConnection(source.id)
 
@@ -162,6 +170,17 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
     setLocalConfig(newConfig)
     setHasUnsavedChanges(true)
     setSaveStatus('idle')
+  }
+
+  const handleAuthTypeChange = (newAuthType: 'apiKey' | 'password') => {
+    setAuthType(newAuthType)
+    
+    // Clear fields from the other auth method
+    if (newAuthType === 'apiKey') {
+      updateLocalConfig({ username: '', password: '' })
+    } else {
+      updateLocalConfig({ apiKey: '' })
+    }
   }
 
   const handleSave = async () => {
@@ -244,14 +263,70 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
       </div>
       
       <div>
-        <label className="block text-sm font-medium mb-1">API Key</label>
-        <input
-          type="password"
-          value={localConfig.apiKey || ''}
-          onChange={(e) => updateLocalConfig({ apiKey: e.target.value })}
-          placeholder="Your Immich API key"
-          className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
+        <label className="block text-sm font-medium mb-2">Authentication Method</label>
+        <div className="flex gap-4 mb-3">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name={`auth-type-${source.id}`}
+              value="apiKey"
+              checked={authType === 'apiKey'}
+              onChange={() => handleAuthTypeChange('apiKey')}
+              className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+            />
+            <span className="text-sm">API Key</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name={`auth-type-${source.id}`}
+              value="password"
+              checked={authType === 'password'}
+              onChange={() => handleAuthTypeChange('password')}
+              className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+            />
+            <span className="text-sm">Username & Password</span>
+          </label>
+        </div>
+        
+        {authType === 'apiKey' ? (
+          <div>
+            <label className="block text-sm font-medium mb-1">API Key</label>
+            <input
+              type="password"
+              value={localConfig.apiKey || ''}
+              onChange={(e) => updateLocalConfig({ apiKey: e.target.value })}
+              placeholder="Your Immich API key"
+              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <div className="text-xs text-gray-500 mt-1">
+              Create an API key in your Immich user settings
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Username (Email)</label>
+              <input
+                type="email"
+                value={localConfig.username || ''}
+                onChange={(e) => updateLocalConfig({ username: e.target.value })}
+                placeholder="your-email@example.com"
+                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Password</label>
+              <input
+                type="password"
+                value={localConfig.password || ''}
+                onChange={(e) => updateLocalConfig({ password: e.target.value })}
+                placeholder="Your Immich password"
+                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+        )}
       </div>
       
       <div>
@@ -265,7 +340,9 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
               }
               onOpenAlbumSelection(source)
             }}
-            disabled={!localConfig.serverUrl || !localConfig.apiKey}
+            disabled={!localConfig.serverUrl || 
+              (authType === 'apiKey' && !localConfig.apiKey) ||
+              (authType === 'password' && (!localConfig.username || !localConfig.password))}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Select Albums ({localConfig.albumIds.length} selected)
@@ -288,7 +365,9 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
         
         <button
           onClick={handleTestConnection}
-          disabled={testConnection.isLoading || (!localConfig.serverUrl && !localConfig.apiKey)}
+          disabled={testConnection.isLoading || !localConfig.serverUrl || 
+            (authType === 'apiKey' && !localConfig.apiKey) ||
+            (authType === 'password' && (!localConfig.username || !localConfig.password))}
           className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {testConnection.isLoading ? 'Testing...' : 'Test Connection'}

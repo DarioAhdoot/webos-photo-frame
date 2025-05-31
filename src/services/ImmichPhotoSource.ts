@@ -37,6 +37,8 @@ interface ImmichAsset {
 }
 
 export class ImmichPhotoSource extends PhotoSourceBase {
+  private authToken: string | null = null
+
   private get immichConfig(): ImmichConfig {
     return this.config.config as ImmichConfig
   }
@@ -45,16 +47,52 @@ export class ImmichPhotoSource extends PhotoSourceBase {
     return this.immichConfig.serverUrl.replace(/\/$/, '')
   }
 
-  private get headers(): Record<string, string> {
+  private async getHeaders(): Promise<Record<string, string>> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
 
     if (this.immichConfig.apiKey) {
       headers['x-api-key'] = this.immichConfig.apiKey
+    } else if (this.immichConfig.username && this.immichConfig.password) {
+      // Use username/password authentication - get token if needed
+      if (!this.authToken) {
+        await this.authenticate()
+      }
+      if (this.authToken) {
+        headers['Authorization'] = `Bearer ${this.authToken}`
+      }
     }
 
     return headers
+  }
+
+  private async authenticate(): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: this.immichConfig.username,
+          password: this.immichConfig.password,
+        }),
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication failed - check your username and password')
+        }
+        throw new Error(`Login failed: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      this.authToken = data.accessToken
+    } catch (error) {
+      this.authToken = null
+      throw error
+    }
   }
 
   async testConnection(): Promise<boolean> {
@@ -62,10 +100,11 @@ export class ImmichPhotoSource extends PhotoSourceBase {
       // Try the newer API endpoint first (v1.118.0+)
       let testUrl = `${this.baseUrl}/api/server/ping`
       console.log('Testing connection to (newer API):', testUrl)
-      console.log('Headers:', this.headers)
+      const headers = await this.getHeaders()
+      console.log('Headers:', headers)
       
       let response = await fetch(testUrl, {
-        headers: this.headers,
+        headers,
         mode: 'cors',
       })
       
@@ -74,7 +113,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
         testUrl = `${this.baseUrl}/api/server-info/ping`
         console.log('Trying older API endpoint:', testUrl)
         response = await fetch(testUrl, {
-          headers: this.headers,
+          headers,
           mode: 'cors',
         })
       }
@@ -84,7 +123,8 @@ export class ImmichPhotoSource extends PhotoSourceBase {
       if (!response.ok) {
         console.error('Connection test failed:', response.status, response.statusText)
         if (response.status === 401) {
-          throw new Error('Authentication failed - check your API key')
+          const authMethod = this.immichConfig.apiKey ? 'API key' : 'username and password'
+          throw new Error(`Authentication failed - check your ${authMethod}`)
         } else if (response.status === 404) {
           throw new Error('Server not found - check your server URL')
         } else {
@@ -106,7 +146,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
   async getAlbums(): Promise<Album[]> {
     try {
       const response = await fetch(`${this.baseUrl}/api/albums`, {
-        headers: this.headers,
+        headers: await this.getHeaders(),
       })
 
       if (!response.ok) {
@@ -157,7 +197,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
   async getPhoto(photoId: string): Promise<Photo | null> {
     try {
       const response = await fetch(`${this.baseUrl}/api/assets/${photoId}`, {
-        headers: this.headers,
+        headers: await this.getHeaders(),
       })
 
       if (!response.ok) {
@@ -176,7 +216,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
 
   private async getAlbumPhotos(albumId: string): Promise<Photo[]> {
     const response = await fetch(`${this.baseUrl}/api/albums/${albumId}`, {
-      headers: this.headers,
+      headers: await this.getHeaders(),
     })
 
     if (!response.ok) {
@@ -230,7 +270,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
 
   async getPhotoBlob(photoUrl: string): Promise<Blob> {
     const response = await fetch(photoUrl, {
-      headers: this.headers,
+      headers: await this.getHeaders(),
     })
     
     if (!response.ok) {
