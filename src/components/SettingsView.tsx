@@ -3,6 +3,8 @@ import { useSettingsStore } from '../stores/settingsStore'
 import { useAppStore } from '../stores/appStore'
 import PhotoSourceConfig from './PhotoSourceConfig'
 import SlideshowSettings from './SlideshowSettings'
+import DisplaySettings from './DisplaySettings'
+import NetworkSettings from './NetworkSettings'
 import AlbumSelectionView from './AlbumSelectionView'
 import type { PhotoSource, ImmichConfig } from '../types'
 
@@ -13,7 +15,7 @@ interface SettingsViewProps {
 export default function SettingsView({ onStartScreensaver }: SettingsViewProps) {
   const { photoSources, updatePhotoSource } = useSettingsStore()
   const { photos } = useAppStore()
-  const [activeTab, setActiveTab] = useState<'sources' | 'slideshow' | 'display'>('sources')
+  const [activeTab, setActiveTab] = useState<'sources' | 'slideshow' | 'display' | 'network'>('sources')
   const [albumSelectionView, setAlbumSelectionView] = useState<{
     photoSource: PhotoSource
     selectedAlbumIds: string[]
@@ -155,6 +157,16 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
               >
                 Display Settings
               </button>
+              <button
+                onClick={() => setActiveTab('network')}
+                className={`w-full text-left px-4 py-2 rounded-lg ${
+                  activeTab === 'network'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Network Settings
+              </button>
             </div>
           </div>
         </nav>
@@ -163,7 +175,8 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
           <div className="p-6">
             {activeTab === 'sources' && <PhotoSourceConfig onOpenAlbumSelection={handleOpenAlbumSelection} />}
             {activeTab === 'slideshow' && <SlideshowSettings />}
-            {activeTab === 'display' && <div>Display settings coming soon...</div>}
+            {activeTab === 'display' && <DisplaySettings />}
+            {activeTab === 'network' && <NetworkSettings />}
           </div>
         </main>
       </div>
