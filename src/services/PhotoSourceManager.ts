@@ -1,6 +1,6 @@
-import type { PhotoSource, Photo } from '../types'
-import type { PhotoSourceAPI, Album } from './PhotoSourceBase'
+import type { Photo, PhotoSource } from '../types'
 import { ImmichPhotoSource } from './ImmichPhotoSource'
+import type { Album, PhotoSourceAPI } from './PhotoSourceBase'
 
 export class PhotoSourceManager {
   private sources: Map<string, PhotoSourceAPI> = new Map()
@@ -15,9 +15,6 @@ export class PhotoSourceManager {
       case 'immich':
         sourceInstance = new ImmichPhotoSource(config)
         break
-      case 'google-photos':
-        // TODO: Implement Google Photos source
-        throw new Error('Google Photos source not yet implemented')
       case 'local':
         // TODO: Implement local file source
         throw new Error('Local file source not yet implemented')

@@ -1,7 +1,7 @@
 export interface PhotoSource {
   id: string
   name: string
-  type: 'immich' | 'google-photos' | 'local'
+  type: 'immich' | 'local'
   config: Record<string, any>
   enabled: boolean
 }
