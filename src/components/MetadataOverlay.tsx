@@ -19,10 +19,6 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
     <div className="metadata-overlay">
       <div className="flex justify-between items-end">
         <div className="photo-info">
-          {photo.metadata?.title && (
-            <h3 className="text-lg font-semibold mb-1">{photo.metadata.title}</h3>
-          )}
-          
           {photo.metadata?.description && (
             <p className="text-sm opacity-90 mb-2">{photo.metadata.description}</p>
           )}

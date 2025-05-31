@@ -3,7 +3,8 @@ import { persist } from 'zustand/middleware'
 import type { AppState, Photo } from '../types'
 
 interface AppStore extends AppState {
-  setCurrentMode: (mode: 'settings' | 'screensaver') => void
+  userRequestedSettings: boolean
+  setCurrentMode: (mode: 'settings' | 'screensaver', userRequested?: boolean) => void
   setCurrentPhotoIndex: (index: number) => void
   setPhotos: (photos: Photo[]) => void
   setLoading: (loading: boolean) => void
@@ -18,8 +19,15 @@ export const useAppStore = create<AppStore>()(
       currentPhotoIndex: 0,
       photos: [],
       isLoading: false,
+      userRequestedSettings: false,
 
-      setCurrentMode: (mode) => set({ currentMode: mode }),
+      setCurrentMode: (mode, userRequested = false) => {
+        console.log('AppStore - setCurrentMode called with:', mode, 'userRequested:', userRequested)
+        set({ 
+          currentMode: mode,
+          userRequestedSettings: mode === 'settings' && userRequested
+        })
+      },
       setCurrentPhotoIndex: (index) => set({ currentPhotoIndex: index }),
       setPhotos: (photos) => set({ photos, currentPhotoIndex: 0 }),
       setLoading: (loading) => set({ isLoading: loading }),

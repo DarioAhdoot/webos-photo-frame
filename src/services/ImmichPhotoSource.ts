@@ -59,12 +59,47 @@ export class ImmichPhotoSource extends PhotoSourceBase {
 
   async testConnection(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/server-info/ping`, {
+      // Try the newer API endpoint first (v1.118.0+)
+      let testUrl = `${this.baseUrl}/api/server/ping`
+      console.log('Testing connection to (newer API):', testUrl)
+      console.log('Headers:', this.headers)
+      
+      let response = await fetch(testUrl, {
         headers: this.headers,
+        mode: 'cors',
       })
-      return response.ok
+      
+      // If that fails with 404, try the older endpoint
+      if (response.status === 404) {
+        testUrl = `${this.baseUrl}/api/server-info/ping`
+        console.log('Trying older API endpoint:', testUrl)
+        response = await fetch(testUrl, {
+          headers: this.headers,
+          mode: 'cors',
+        })
+      }
+      
+      console.log('Response status:', response.status, response.statusText)
+      
+      if (!response.ok) {
+        console.error('Connection test failed:', response.status, response.statusText)
+        if (response.status === 401) {
+          throw new Error('Authentication failed - check your API key')
+        } else if (response.status === 404) {
+          throw new Error('Server not found - check your server URL')
+        } else {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`)
+        }
+      }
+      
+      console.log('Connection test successful')
+      return true
     } catch (error) {
-      this.handleError(error, 'connection test')
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        console.error('Network error - possibly CORS or server unreachable:', error)
+        throw new Error('Cannot reach server - check URL and ensure CORS is configured')
+      }
+      throw error
     }
   }
 

@@ -40,7 +40,7 @@ export default function SlideshowSettings() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-8">
       <div>
         <h2 className="text-xl font-semibold mb-4">Slideshow Settings</h2>
         
@@ -70,7 +70,7 @@ export default function SlideshowSettings() {
               onChange={(e) => handleSlideshowChange('transition', e.target.value)}
               className="w-full px-3 py-2 border rounded-md"
             >
-              <option value="fade">Fade</option>
+              <option value="fade">Fade (Recommended)</option>
               <option value="slide">Slide</option>
               <option value="none">None</option>
             </select>

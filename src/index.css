@@ -33,7 +33,7 @@
   }
 
   .metadata-overlay {
-    @apply absolute bottom-4 left-4 right-4 text-white bg-black bg-opacity-50 p-4 rounded-lg backdrop-blur-sm;
+    @apply absolute bottom-4 left-4 right-4 text-white bg-black bg-opacity-30 p-4 rounded-lg backdrop-blur-sm z-30;
   }
 
   .settings-modal {
