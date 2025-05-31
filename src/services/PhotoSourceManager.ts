@@ -60,7 +60,7 @@ export class PhotoSourceManager {
   /**
    * Get photos from all enabled sources
    */
-  async getAllPhotos(enabledSources: PhotoSource[], useOptimized: boolean = true): Promise<Photo[]> {
+  async getAllPhotos(enabledSources: PhotoSource[], useOptimized: boolean = true, includeVideos: boolean = true): Promise<Photo[]> {
     const allPhotos: Photo[] = []
 
     for (const sourceConfig of enabledSources.filter(s => s.enabled)) {
@@ -76,7 +76,13 @@ export class PhotoSourceManager {
           : undefined
 
         const photos = await source.getPhotos(albumIds, useOptimized)
-        allPhotos.push(...photos)
+        
+        // Filter out videos if not enabled
+        const filteredPhotos = includeVideos 
+          ? photos 
+          : photos.filter(photo => photo.type !== 'VIDEO')
+        
+        allPhotos.push(...filteredPhotos)
       } catch (error) {
         console.error(`Failed to get photos from ${sourceConfig.name}:`, error)
         // Continue with other sources even if one fails

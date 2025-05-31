@@ -46,6 +46,7 @@ export function usePhotoSources() {
     // Safety check for network settings
     const refreshInterval = settings?.network?.refreshIntervalHours || 24
     const imageResolution = settings?.display?.imageResolution || 'optimized'
+    const videoEnabled = settings?.slideshow?.videoEnabled ?? true
     
     // Create a more specific query key that includes album configurations
     const sourceConfigs = enabledSources.map(source => ({
@@ -54,13 +55,14 @@ export function usePhotoSources() {
     })).sort((a, b) => a.id.localeCompare(b.id))
     
     return useQuery({
-      queryKey: ['all-photos', sourceConfigs, imageResolution],
+      queryKey: ['all-photos', sourceConfigs, imageResolution, videoEnabled],
       queryFn: async () => {
         setLoading(true)
         try {
           const { settings } = useSettingsStore.getState()
           const useOptimized = settings?.display?.imageResolution === 'optimized'
-          const photos = await photoSourceManager.getAllPhotos(enabledSources, useOptimized)
+          const includeVideos = settings?.slideshow?.videoEnabled ?? true
+          const photos = await photoSourceManager.getAllPhotos(enabledSources, useOptimized, includeVideos)
           const shuffledPhotos = photoSourceManager.shufflePhotos(photos, settings?.slideshow?.order || 'random')
           setPhotos(shuffledPhotos)
           return shuffledPhotos
