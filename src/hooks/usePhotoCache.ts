@@ -11,13 +11,13 @@ export function usePhotoCache() {
 
   // Initialize cache manager with current settings
   useEffect(() => {
-    photoCacheManager.init(settings.cache.maxSizeMB)
-  }, [settings.cache.maxSizeMB])
+    photoCacheManager.init(settings.network.maxSizeMB)
+  }, [settings.network.maxSizeMB])
 
   // Update cache size when settings change
   useEffect(() => {
-    photoCacheManager.updateMaxSize(settings.cache.maxSizeMB)
-  }, [settings.cache.maxSizeMB])
+    photoCacheManager.updateMaxSize(settings.network.maxSizeMB)
+  }, [settings.network.maxSizeMB])
 
   // Query to get cache info
   const useCacheInfo = () => {

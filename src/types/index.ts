@@ -58,17 +58,19 @@ export interface LayoutSettings {
 export interface DisplaySettings {
   showMetadata: boolean
   showWeather: boolean
+  imageResolution: 'original' | 'optimized'
 }
 
-export interface CacheSettings {
+export interface NetworkSettings {
   maxSizeMB: number
+  refreshIntervalHours: number
 }
 
 export interface AppSettings {
   slideshow: SlideshowSettings
   layout: LayoutSettings
   display: DisplaySettings
-  cache: CacheSettings
+  network: NetworkSettings
 }
 
 export interface WeatherData {

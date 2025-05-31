@@ -46,6 +46,37 @@ export default function DisplaySettings() {
             />
             <span>Show Weather Information</span>
           </label>
+
+          <div>
+            <label className="block text-sm font-medium mb-3">Image Resolution</label>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="imageResolution"
+                  value="optimized"
+                  checked={settings.display.imageResolution === 'optimized'}
+                  onChange={(e) => handleDisplayChange('imageResolution', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Optimized (Recommended)</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="imageResolution"
+                  value="original"
+                  checked={settings.display.imageResolution === 'original'}
+                  onChange={(e) => handleDisplayChange('imageResolution', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Original</span>
+              </label>
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
+              Optimized provides faster loading with preview quality, Original uses full resolution
+            </div>
+          </div>
         </div>
       </div>
 

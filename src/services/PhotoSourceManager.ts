@@ -60,7 +60,7 @@ export class PhotoSourceManager {
   /**
    * Get photos from all enabled sources
    */
-  async getAllPhotos(enabledSources: PhotoSource[]): Promise<Photo[]> {
+  async getAllPhotos(enabledSources: PhotoSource[], useOptimized: boolean = true): Promise<Photo[]> {
     const allPhotos: Photo[] = []
 
     for (const sourceConfig of enabledSources.filter(s => s.enabled)) {
@@ -75,7 +75,7 @@ export class PhotoSourceManager {
           ? sourceConfig.config.albumIds 
           : undefined
 
-        const photos = await source.getPhotos(albumIds)
+        const photos = await source.getPhotos(albumIds, useOptimized)
         allPhotos.push(...photos)
       } catch (error) {
         console.error(`Failed to get photos from ${sourceConfig.name}:`, error)

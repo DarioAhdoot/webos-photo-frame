@@ -16,6 +16,11 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   const { settings } = useSettingsStore()
   const { isLoading, error } = useAllPhotos()
   const [clickToExitEnabled, setClickToExitEnabled] = useState(false)
+
+  // Use the standard nextPhoto function which already loops
+  const handleNextPhoto = useCallback(() => {
+    nextPhoto() // Automatically restarts when reaching the end
+  }, [nextPhoto])
   
   // Preload images for smooth transitions
   const { getPreloadedImageUrl, preloadedCount } = useImagePreloader(
@@ -41,9 +46,9 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
     if (event.key === 'Escape' || event.key === ' ') {
       onExit()
     } else if (event.key === 'ArrowRight') {
-      nextPhoto()
+      handleNextPhoto()
     }
-  }, [onExit, nextPhoto])
+  }, [onExit, handleNextPhoto])
 
   // Handle mouse/touch events (with delay to prevent accidental exits)
   const handleClick = useCallback((event: MouseEvent) => {
@@ -85,11 +90,11 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
     }
 
     const interval = setInterval(() => {
-      nextPhoto()
+      handleNextPhoto()
     }, duration)
 
     return () => clearInterval(interval)
-  }, [photos.length, settings.slideshow.interval, settings.slideshow.videoPlayback, settings.slideshow.videoDuration, nextPhoto, currentPhotoIndex])
+  }, [photos.length, settings.slideshow.interval, settings.slideshow.videoPlayback, settings.slideshow.videoDuration, handleNextPhoto, currentPhotoIndex])
 
   // Setup event listeners
   useEffect(() => {
@@ -183,7 +188,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
         transition={settings.slideshow.transition}
         layout={settings.layout.portraitLayout}
         getPreloadedImageUrl={getPreloadedImageUrl}
-        onVideoEnd={nextPhoto}
+        onVideoEnd={handleNextPhoto}
         videoPlayback={settings.slideshow.videoPlayback}
         videoDuration={settings.slideshow.videoDuration}
       />

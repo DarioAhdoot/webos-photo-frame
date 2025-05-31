@@ -14,12 +14,12 @@ export interface PhotoSourceAPI {
   /**
    * Get photos and videos from specified albums
    */
-  getPhotos(albumIds?: string[]): Promise<Photo[]>
+  getPhotos(albumIds?: string[], useOptimized?: boolean): Promise<Photo[]>
 
   /**
    * Get a specific photo or video by ID
    */
-  getPhoto(photoId: string): Promise<Photo | null>
+  getPhoto(photoId: string, useOptimized?: boolean): Promise<Photo | null>
 
   /**
    * Get photo blob for caching (only used for images, not videos)
@@ -44,8 +44,8 @@ export abstract class PhotoSourceBase implements PhotoSourceAPI {
 
   abstract testConnection(): Promise<boolean>
   abstract getAlbums(): Promise<Album[]>
-  abstract getPhotos(albumIds?: string[]): Promise<Photo[]>
-  abstract getPhoto(photoId: string): Promise<Photo | null>
+  abstract getPhotos(albumIds?: string[], useOptimized?: boolean): Promise<Photo[]>
+  abstract getPhoto(photoId: string, useOptimized?: boolean): Promise<Photo | null>
 
   async getPhotoBlob(photoUrl: string): Promise<Blob> {
     const response = await fetch(photoUrl)

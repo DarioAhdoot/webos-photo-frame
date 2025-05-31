@@ -169,21 +169,21 @@ export class ImmichPhotoSource extends PhotoSourceBase {
     }
   }
 
-  async getPhotos(albumIds?: string[]): Promise<Photo[]> {
+  async getPhotos(albumIds?: string[], useOptimized: boolean = true): Promise<Photo[]> {
     try {
       const photos: Photo[] = []
 
       if (albumIds && albumIds.length > 0) {
         // Get photos from specific albums
         for (const albumId of albumIds) {
-          const albumPhotos = await this.getAlbumPhotos(albumId)
+          const albumPhotos = await this.getAlbumPhotos(albumId, useOptimized)
           photos.push(...albumPhotos)
         }
       } else {
         // Get all photos (or implement a different strategy)
         const albums = await this.getAlbums()
         for (const album of albums) {
-          const albumPhotos = await this.getAlbumPhotos(album.id)
+          const albumPhotos = await this.getAlbumPhotos(album.id, useOptimized)
           photos.push(...albumPhotos)
         }
       }
@@ -194,7 +194,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
     }
   }
 
-  async getPhoto(photoId: string): Promise<Photo | null> {
+  async getPhoto(photoId: string, useOptimized: boolean = true): Promise<Photo | null> {
     try {
       const response = await fetch(`${this.baseUrl}/api/assets/${photoId}`, {
         headers: await this.getHeaders(),
@@ -208,13 +208,13 @@ export class ImmichPhotoSource extends PhotoSourceBase {
       }
 
       const asset: ImmichAsset = await response.json()
-      return this.mapAssetToPhoto(asset)
+      return this.mapAssetToPhoto(asset, undefined, useOptimized)
     } catch (error) {
       this.handleError(error, 'get photo')
     }
   }
 
-  private async getAlbumPhotos(albumId: string): Promise<Photo[]> {
+  private async getAlbumPhotos(albumId: string, useOptimized: boolean = true): Promise<Photo[]> {
     const response = await fetch(`${this.baseUrl}/api/albums/${albumId}`, {
       headers: await this.getHeaders(),
     })
@@ -227,10 +227,10 @@ export class ImmichPhotoSource extends PhotoSourceBase {
     
     return album.assets
       .filter(asset => asset.type === 'IMAGE' || asset.type === 'VIDEO') // Include both images and videos
-      .map(asset => this.mapAssetToPhoto(asset, albumId))
+      .map(asset => this.mapAssetToPhoto(asset, albumId, useOptimized))
   }
 
-  private mapAssetToPhoto(asset: ImmichAsset, albumId?: string): Photo {
+  private mapAssetToPhoto(asset: ImmichAsset, albumId?: string, useOptimized: boolean = true): Photo {
     const metadata: PhotoMetadata = {
       title: asset.originalFileName,
       dateTaken: asset.fileCreatedAt,
@@ -247,9 +247,14 @@ export class ImmichPhotoSource extends PhotoSourceBase {
       description: asset.exifInfo?.description,
     }
 
+    // Choose URL based on resolution setting
+    const photoUrl = useOptimized 
+      ? `${this.baseUrl}/api/assets/${asset.id}/thumbnail?size=preview`
+      : `${this.baseUrl}/api/assets/${asset.id}/original`
+
     return {
       id: asset.id,
-      url: `${this.baseUrl}/api/assets/${asset.id}/original`,
+      url: photoUrl,
       thumbnailUrl: `${this.baseUrl}/api/assets/${asset.id}/thumbnail`,
       metadata,
       source: this.config.id,

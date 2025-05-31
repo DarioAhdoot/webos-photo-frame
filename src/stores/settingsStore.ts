@@ -25,10 +25,52 @@ const defaultSettings: AppSettings = {
   display: {
     showMetadata: false,
     showWeather: false,
+    imageResolution: 'optimized',
   },
-  cache: {
+  network: {
     maxSizeMB: 100,
+    refreshIntervalHours: 24,
   },
+}
+
+// Migration function to handle old cache settings format
+const migrateSettings = (persistedState: any): any => {
+  if (!persistedState?.state?.settings) {
+    return persistedState
+  }
+
+  const settings = persistedState.state.settings
+
+  // If we have old cache settings but no network settings, migrate them
+  if (settings.cache && !settings.network) {
+    console.log('Migrating old cache settings to network settings')
+    settings.network = {
+      maxSizeMB: settings.cache.maxSizeMB || 100,
+      refreshIntervalHours: 24, // Default value
+    }
+    delete settings.cache
+  }
+
+  // Ensure network settings exist with defaults
+  if (!settings.network) {
+    settings.network = {
+      maxSizeMB: 100,
+      refreshIntervalHours: 24,
+    }
+  }
+
+  // Ensure all required network properties exist
+  settings.network = {
+    maxSizeMB: settings.network.maxSizeMB ?? 100,
+    refreshIntervalHours: settings.network.refreshIntervalHours ?? 24,
+  }
+
+  // Remove old autoRestart property if it exists
+  if ('autoRestart' in settings.network) {
+    delete settings.network.autoRestart
+  }
+
+  return persistedState
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -65,6 +107,18 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'immich-screensaver-settings',
+      onRehydrateStorage: () => (state) => {
+        // Ensure settings are properly migrated after rehydration
+        if (state?.settings && !state.settings.network) {
+          console.log('Post-rehydration migration: adding missing network settings')
+          state.settings.network = {
+            maxSizeMB: 100,
+            refreshIntervalHours: 24,
+          }
+        }
+      },
+      migrate: migrateSettings,
+      version: 1,
     }
   )
 )

@@ -40,16 +40,22 @@ export function usePhotoSources() {
 
   // Query to get all photos from enabled sources
   const useAllPhotos = () => {
+    const { settings } = useSettingsStore()
     const enabledSources = photoSources.filter(source => source.enabled)
     
+    // Safety check for network settings
+    const refreshInterval = settings?.network?.refreshIntervalHours || 24
+    const imageResolution = settings?.display?.imageResolution || 'optimized'
+    
     return useQuery({
-      queryKey: ['all-photos', enabledSources.map(s => s.id).sort()],
+      queryKey: ['all-photos', enabledSources.map(s => s.id).sort(), imageResolution],
       queryFn: async () => {
         setLoading(true)
         try {
-          const photos = await photoSourceManager.getAllPhotos(enabledSources)
           const { settings } = useSettingsStore.getState()
-          const shuffledPhotos = photoSourceManager.shufflePhotos(photos, settings.slideshow.order)
+          const useOptimized = settings?.display?.imageResolution === 'optimized'
+          const photos = await photoSourceManager.getAllPhotos(enabledSources, useOptimized)
+          const shuffledPhotos = photoSourceManager.shufflePhotos(photos, settings?.slideshow?.order || 'random')
           setPhotos(shuffledPhotos)
           return shuffledPhotos
         } finally {
@@ -57,8 +63,9 @@ export function usePhotoSources() {
         }
       },
       enabled: enabledSources.length > 0,
-      staleTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: refreshInterval * 60 * 60 * 1000, // Use configured refresh interval
       gcTime: 30 * 60 * 1000, // 30 minutes
+      refetchInterval: refreshInterval * 60 * 60 * 1000, // Auto-refresh at interval
     })
   }
 
