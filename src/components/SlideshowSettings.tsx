@@ -55,7 +55,7 @@ export default function SlideshowSettings() {
 
           <div>
             <label className="block text-sm font-medium mb-3">Transition Effect</label>
-            <div className="flex gap-6">
+            <div className="flex gap-6 flex-wrap">
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -65,7 +65,7 @@ export default function SlideshowSettings() {
                   onChange={(e) => handleSlideshowChange('transition', e.target.value)}
                   className="mr-3"
                 />
-                <span>Fade (Recommended)</span>
+                <span>Fade</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -82,6 +82,17 @@ export default function SlideshowSettings() {
                 <input
                   type="radio"
                   name="transition"
+                  value="ken-burns"
+                  checked={settings.slideshow.transition === 'ken-burns'}
+                  onChange={(e) => handleSlideshowChange('transition', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Ken Burns (Recommended)</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="transition"
                   value="none"
                   checked={settings.slideshow.transition === 'none'}
                   onChange={(e) => handleSlideshowChange('transition', e.target.value)}
@@ -89,6 +100,9 @@ export default function SlideshowSettings() {
                 />
                 <span>None</span>
               </label>
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
+              Ken Burns adds subtle zoom and pan effects like Apple TV screensavers
             </div>
           </div>
 

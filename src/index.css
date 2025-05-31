@@ -43,4 +43,21 @@
   .settings-content {
     @apply bg-white rounded-lg p-6 max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto;
   }
+  
+  /* Ken Burns animation - runs once for the duration of each photo */
+  .ken-burns-animate {
+    animation: kenBurns var(--slideshow-duration, 10s) ease-in-out forwards;
+    transform-origin: center center;
+  }
+}
+
+@keyframes kenBurns {
+  0% {
+    transform: scale(var(--ken-burns-scale-start, 1)) 
+               translate(var(--ken-burns-translate-x-start, 0), var(--ken-burns-translate-y-start, 0));
+  }
+  100% {
+    transform: scale(var(--ken-burns-scale-end, 1.1)) 
+               translate(var(--ken-burns-translate-x-end, 0), var(--ken-burns-translate-y-end, 0));
+  }
 }

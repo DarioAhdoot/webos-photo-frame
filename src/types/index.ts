@@ -45,7 +45,7 @@ export interface CachedPhoto extends Photo {
 
 export interface SlideshowSettings {
   interval: number // seconds for photos
-  transition: 'fade' | 'slide' | 'none'
+  transition: 'fade' | 'slide' | 'none' | 'ken-burns'
   order: 'random' | 'sequential'
   videoPlayback: 'full' | 'duration' // Play full video or limit to duration
   videoDuration: number // seconds - max duration when videoPlayback is 'duration'

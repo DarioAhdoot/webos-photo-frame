@@ -192,6 +192,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
         videoPlayback={settings.slideshow.videoPlayback}
         videoDuration={settings.slideshow.videoDuration}
         videoMuted={settings.slideshow.videoMuted}
+        slideshowInterval={settings.slideshow.interval}
       />
       
       {settings.display.showMetadata && (

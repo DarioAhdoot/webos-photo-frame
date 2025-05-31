@@ -4,24 +4,53 @@ import type { Photo } from '../types'
 
 interface PhotoDisplayProps {
   photo: Photo
-  transition: 'fade' | 'slide' | 'dissolve' | 'none'
+  transition: 'fade' | 'slide' | 'dissolve' | 'none' | 'ken-burns'
   layout: 'single' | 'dual' | 'blurred-bg'
   getPreloadedImageUrl?: (photoId: string) => string | null
   onVideoEnd?: () => void
   videoPlayback?: 'full' | 'duration'
   videoDuration?: number
   videoMuted?: boolean
+  slideshowInterval?: number
 }
 
-export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoDuration, videoMuted = true }: PhotoDisplayProps) {
+export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoDuration, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('')
   const [previousImageSrc, setPreviousImageSrc] = useState<string>('')
   const [currentImageLoaded, setCurrentImageLoaded] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [currentPhotoId, setCurrentPhotoId] = useState<string>('')
   const [previousPhotoId, setPreviousPhotoId] = useState<string>('')
+  const [kenBurnsAnimation, setKenBurnsAnimation] = useState<{
+    scale: { start: number; end: number }
+    translate: { start: { x: number; y: number }; end: { x: number; y: number } }
+    key: string // Unique key to force animation restart
+  } | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const previousVideoRef = useRef<HTMLVideoElement>(null)
+  
+  // Generate random Ken Burns animation parameters
+  const generateKenBurnsAnimation = () => {
+    // More subtle random scale between 1.0 and 1.08 (very gentle zoom)
+    const startScale = 1.0 + Math.random() * 0.03 // 1.0 to 1.03
+    const endScale = 1.02 + Math.random() * 0.06 // 1.02 to 1.08
+    
+    // More subtle translate values for gentle panning (in percentages)
+    const maxTranslate = 2 // 2% maximum movement (reduced from 5%)
+    const startX = (Math.random() - 0.5) * maxTranslate
+    const startY = (Math.random() - 0.5) * maxTranslate
+    const endX = (Math.random() - 0.5) * maxTranslate
+    const endY = (Math.random() - 0.5) * maxTranslate
+    
+    return {
+      scale: { start: startScale, end: endScale },
+      translate: { 
+        start: { x: startX, y: startY },
+        end: { x: endX, y: endY }
+      },
+      key: `kb-${Date.now()}-${Math.random()}` // Unique key for each animation
+    }
+  }
   
   console.log('PhotoDisplay render:', {
     photoId: photo.id,
@@ -49,6 +78,15 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
       setCurrentImageLoaded(false)
       setIsTransitioning(false) // Reset transition state
       setCurrentImageSrc('')
+      
+      // Generate Ken Burns animation for new photo (only for images)
+      if (transition === 'ken-burns' && photo.type !== 'VIDEO') {
+        const newAnimation = generateKenBurnsAnimation()
+        console.log('Generated new Ken Burns animation for photo:', photo.id, newAnimation)
+        setKenBurnsAnimation(newAnimation)
+      } else {
+        setKenBurnsAnimation(null)
+      }
     }
     
     // Check if image is preloaded first (only for images, not videos)
@@ -195,6 +233,9 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
         return 'animate-fade-in'
       case 'slide':
         return 'animate-slide-left'
+      case 'ken-burns':
+        // Ken Burns only for photos, not videos
+        return photo.type === 'VIDEO' ? 'opacity-100' : 'ken-burns-animate'
       default:
         return 'opacity-100'
     }
@@ -221,14 +262,41 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
   // Use object-cover for landscape photos to fill screen, object-contain for portrait
   const imageObjectFit = isLandscape ? 'object-cover' : 'object-contain'
   
+  // Generate Ken Burns CSS custom properties (only for photos, not videos)
+  const getKenBurnsStyle = () => {
+    if (transition !== 'ken-burns' || !kenBurnsAnimation || photo.type === 'VIDEO') {
+      return {}
+    }
+    
+    const { scale, translate, key } = kenBurnsAnimation
+    return {
+      '--ken-burns-scale-start': scale.start,
+      '--ken-burns-scale-end': scale.end,
+      '--ken-burns-translate-x-start': `${translate.start.x}%`,
+      '--ken-burns-translate-y-start': `${translate.start.y}%`,
+      '--ken-burns-translate-x-end': `${translate.end.x}%`,
+      '--ken-burns-translate-y-end': `${translate.end.y}%`,
+      '--slideshow-duration': `${slideshowInterval}s`
+    } as React.CSSProperties
+  }
+  
   // Helper function to render media (image or video)
   const renderMedia = (src: string, isVideo: boolean, isPrevious: boolean = false, className: string = '') => {
+    const kenBurnsStyle = !isPrevious ? getKenBurnsStyle() : {}
+    
+    // Generate unique key for Ken Burns animation restart
+    const elementKey = !isPrevious && transition === 'ken-burns' && kenBurnsAnimation 
+      ? kenBurnsAnimation.key 
+      : undefined
+    
     if (isVideo) {
       return (
         <video
+          key={elementKey} // Force re-render for animation restart
           ref={isPrevious ? previousVideoRef : videoRef}
           src={src}
           className={`photo-image w-full h-full ${imageObjectFit} ${className}`}
+          style={kenBurnsStyle}
           onCanPlay={isPrevious ? undefined : handleVideoCanPlay}
           onEnded={isPrevious ? undefined : handleVideoEnded}
           onError={handleImageError}
@@ -242,9 +310,11 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
     } else {
       return (
         <img
+          key={elementKey} // Force re-render for animation restart
           src={src}
           alt={isPrevious ? 'Previous photo' : (photo.metadata?.title || 'Photo')}
           className={`photo-image w-full h-full ${imageObjectFit} ${className}`}
+          style={kenBurnsStyle}
           onLoad={isPrevious ? undefined : handleCurrentImageLoad}
           onError={handleImageError}
         />
