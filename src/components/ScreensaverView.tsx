@@ -81,8 +81,8 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
         // Don't set an interval here - the video will trigger advancement on end
         return
       } else {
-        // Use the configured video duration limit
-        duration = settings.slideshow.videoDuration * 1000
+        // Use the photo interval for video duration limit
+        duration = settings.slideshow.interval * 1000
       }
     } else {
       // Use photo interval for images
@@ -94,7 +94,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
     }, duration)
 
     return () => clearInterval(interval)
-  }, [photos.length, settings.slideshow.interval, settings.slideshow.videoPlayback, settings.slideshow.videoDuration, handleNextPhoto, currentPhotoIndex])
+  }, [photos.length, settings.slideshow.interval, settings.slideshow.videoPlayback, handleNextPhoto, currentPhotoIndex])
 
   // Setup event listeners
   useEffect(() => {
@@ -190,7 +190,6 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
         getPreloadedImageUrl={getPreloadedImageUrl}
         onVideoEnd={handleNextPhoto}
         videoPlayback={settings.slideshow.videoPlayback}
-        videoDuration={settings.slideshow.videoDuration}
         videoMuted={settings.slideshow.videoMuted}
         slideshowInterval={settings.slideshow.interval}
       />

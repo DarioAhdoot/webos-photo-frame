@@ -18,7 +18,6 @@ const defaultSettings: AppSettings = {
     order: 'random',
     videoEnabled: true,
     videoPlayback: 'full',
-    videoDuration: 30,
     videoMuted: true,
   },
   layout: {
@@ -82,7 +81,6 @@ const migrateSettings = (persistedState: any): any => {
       order: settings.slideshow.order ?? defaultSettings.slideshow.order,
       videoEnabled: settings.slideshow.videoEnabled ?? defaultSettings.slideshow.videoEnabled,
       videoPlayback: settings.slideshow.videoPlayback ?? defaultSettings.slideshow.videoPlayback,
-      videoDuration: settings.slideshow.videoDuration ?? defaultSettings.slideshow.videoDuration,
       videoMuted: settings.slideshow.videoMuted ?? defaultSettings.slideshow.videoMuted,
     }
   }

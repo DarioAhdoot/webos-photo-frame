@@ -1,5 +1,5 @@
-import { useSettingsStore } from '../stores/settingsStore'
 import { useQueryClient } from '@tanstack/react-query'
+import { useSettingsStore } from '../stores/settingsStore'
 
 export default function VideoSettings() {
   const { settings, updateSettings } = useSettingsStore()
@@ -65,33 +65,8 @@ export default function VideoSettings() {
                   onChange={(e) => handleSlideshowChange('videoPlayback', e.target.value)}
                   className="mr-3"
                 />
-                <span>Limit Duration</span>
+                <span>Limit Duration (uses photo interval of {settings.slideshow.interval}s)</span>
               </label>
-              
-              {settings.slideshow.videoPlayback === 'duration' && (
-                <div className="flex items-center gap-3 ml-4">
-                  <span className="text-sm text-gray-600">Max:</span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleSlideshowChange('videoDuration', Math.max(5, settings.slideshow.videoDuration - 5))}
-                      className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
-                      disabled={settings.slideshow.videoDuration <= 5}
-                    >
-                      ◀
-                    </button>
-                    <span className="text-sm font-medium min-w-[60px] text-center">
-                      {settings.slideshow.videoDuration}s
-                    </span>
-                    <button
-                      onClick={() => handleSlideshowChange('videoDuration', Math.min(300, settings.slideshow.videoDuration + 5))}
-                      className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
-                      disabled={settings.slideshow.videoDuration >= 300}
-                    >
-                      ▶
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
             <div className="text-xs text-gray-500 mt-2">
               Whether to play videos completely or limit to a maximum duration

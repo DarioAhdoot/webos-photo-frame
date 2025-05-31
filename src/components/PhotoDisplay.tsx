@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { photoSourceManager } from '../services/PhotoSourceManager'
 import type { Photo } from '../types'
 
@@ -9,12 +9,11 @@ interface PhotoDisplayProps {
   getPreloadedImageUrl?: (photoId: string) => string | null
   onVideoEnd?: () => void
   videoPlayback?: 'full' | 'duration'
-  videoDuration?: number
   videoMuted?: boolean
   slideshowInterval?: number
 }
 
-export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoDuration, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
+export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('')
   const [previousImageSrc, setPreviousImageSrc] = useState<string>('')
   const [currentImageLoaded, setCurrentImageLoaded] = useState(false)
@@ -172,11 +171,11 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
         videoRef.current.play().catch(e => console.warn('Video autoplay failed:', e))
         
         // Set up duration limit if needed
-        if (videoPlayback === 'duration' && videoDuration && onVideoEnd) {
+        if (videoPlayback === 'duration' && onVideoEnd) {
           setTimeout(() => {
-            console.log(`Video duration limit reached: ${videoDuration}s`)
+            console.log(`Video duration limit reached: ${slideshowInterval}s`)
             onVideoEnd()
-          }, videoDuration * 1000)
+          }, slideshowInterval * 1000)
         }
       }
     }
@@ -268,7 +267,7 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
       return {}
     }
     
-    const { scale, translate, key } = kenBurnsAnimation
+    const { scale, translate } = kenBurnsAnimation
     return {
       '--ken-burns-scale-start': scale.start,
       '--ken-burns-scale-end': scale.end,
