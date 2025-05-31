@@ -1,0 +1,13 @@
+{
+  "id": "com.immich.screensaver",
+  "version": "1.0.0",
+  "vendor": "Immich",
+  "type": "web",
+  "main": "dist/index.html",
+  "title": "Immich Photo Screensaver",
+  "resolution": "1920x1080",
+  "appDescription": "A WebOS screensaver app that displays photos from various sources including Immich",
+  "requiredPermissions": [
+    "network.access"
+  ]
+}

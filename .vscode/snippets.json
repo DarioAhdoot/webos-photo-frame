@@ -1,0 +1,123 @@
+{
+  "React Function Component": {
+    "prefix": "rfc",
+    "body": [
+      "interface ${1:ComponentName}Props {",
+      "  $2",
+      "}",
+      "",
+      "export default function ${1:ComponentName}({ $3 }: ${1:ComponentName}Props) {",
+      "  return (",
+      "    <div className=\"$4\">",
+      "      $0",
+      "    </div>",
+      "  )",
+      "}"
+    ],
+    "description": "Create a React functional component with TypeScript"
+  },
+  "React Hook": {
+    "prefix": "rhook",
+    "body": [
+      "import { useState, useEffect } from 'react'",
+      "",
+      "export function use${1:HookName}($2) {",
+      "  const [${3:state}, set${3/(.*)/${3:/capitalize}/}] = useState($4)",
+      "",
+      "  useEffect(() => {",
+      "    $5",
+      "  }, [$6])",
+      "",
+      "  return {",
+      "    $3,",
+      "    set${3/(.*)/${3:/capitalize}/},",
+      "    $0",
+      "  }",
+      "}"
+    ],
+    "description": "Create a custom React hook"
+  },
+  "Zustand Store": {
+    "prefix": "zstore",
+    "body": [
+      "import { create } from 'zustand'",
+      "import { persist } from 'zustand/middleware'",
+      "",
+      "interface ${1:StoreName}Store {",
+      "  $2",
+      "}",
+      "",
+      "export const use${1:StoreName}Store = create<${1:StoreName}Store>()(",
+      "  persist(",
+      "    (set, get) => ({",
+      "      $3",
+      "    }),",
+      "    {",
+      "      name: '${1/(.*)/${1:/downcase}/}-store',",
+      "    }",
+      "  )",
+      ")"
+    ],
+    "description": "Create a Zustand store with persistence"
+  },
+  "TanStack Query Hook": {
+    "prefix": "usequery",
+    "body": [
+      "export function use${1:QueryName}($2) {",
+      "  return useQuery({",
+      "    queryKey: ['${1/(.*)/${1:/downcase}/}'$3],",
+      "    queryFn: () => $4,",
+      "    $0",
+      "  })",
+      "}"
+    ],
+    "description": "Create a TanStack Query hook"
+  },
+  "Photo Source Implementation": {
+    "prefix": "photosource",
+    "body": [
+      "import { PhotoSourceBase, type Album } from './PhotoSourceBase'",
+      "import type { Photo, ${1:SourceName}Config, PhotoMetadata } from '../types'",
+      "",
+      "export class ${1:SourceName}PhotoSource extends PhotoSourceBase {",
+      "  private get config(): ${1:SourceName}Config {",
+      "    return this.config.config as ${1:SourceName}Config",
+      "  }",
+      "",
+      "  async testConnection(): Promise<boolean> {",
+      "    try {",
+      "      $2",
+      "      return true",
+      "    } catch (error) {",
+      "      this.handleError(error, 'connection test')",
+      "    }",
+      "  }",
+      "",
+      "  async getAlbums(): Promise<Album[]> {",
+      "    try {",
+      "      $3",
+      "    } catch (error) {",
+      "      this.handleError(error, 'get albums')",
+      "    }",
+      "  }",
+      "",
+      "  async getPhotos(albumIds?: string[]): Promise<Photo[]> {",
+      "    try {",
+      "      $4",
+      "    } catch (error) {",
+      "      this.handleError(error, 'get photos')",
+      "    }",
+      "  }",
+      "",
+      "  async getPhoto(photoId: string): Promise<Photo | null> {",
+      "    try {",
+      "      $5",
+      "    } catch (error) {",
+      "      this.handleError(error, 'get photo')",
+      "    }",
+      "  }",
+      "}"
+    ],
+    "description": "Create a new photo source implementation"
+  }
+}
