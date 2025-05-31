@@ -6,6 +6,7 @@ import PhotoSourceConfig from './PhotoSourceConfig'
 import SlideshowSettings from './SlideshowSettings'
 import DisplaySettings from './DisplaySettings'
 import NetworkSettings from './NetworkSettings'
+import VideoSettings from './VideoSettings'
 import AlbumSelectionView from './AlbumSelectionView'
 import type { PhotoSource, ImmichConfig } from '../types'
 
@@ -17,7 +18,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   const { photoSources, updatePhotoSource } = useSettingsStore()
   const { photos } = useAppStore()
   const queryClient = useQueryClient()
-  const [activeTab, setActiveTab] = useState<'sources' | 'slideshow' | 'display' | 'network'>('sources')
+  const [activeTab, setActiveTab] = useState<'sources' | 'slideshow' | 'video' | 'display' | 'network'>('sources')
   const [albumSelectionView, setAlbumSelectionView] = useState<{
     photoSource: PhotoSource
     selectedAlbumIds: string[]
@@ -163,6 +164,16 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                 Slideshow Settings
               </button>
               <button
+                onClick={() => setActiveTab('video')}
+                className={`w-full text-left px-4 py-2 rounded-lg ${
+                  activeTab === 'video'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Video Settings
+              </button>
+              <button
                 onClick={() => setActiveTab('display')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
                   activeTab === 'display'
@@ -190,6 +201,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
           <div className="p-6">
             {activeTab === 'sources' && <PhotoSourceConfig onOpenAlbumSelection={handleOpenAlbumSelection} />}
             {activeTab === 'slideshow' && <SlideshowSettings />}
+            {activeTab === 'video' && <VideoSettings />}
             {activeTab === 'display' && <DisplaySettings />}
             {activeTab === 'network' && <NetworkSettings />}
           </div>
