@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { photoSourceManager } from '../services/PhotoSourceManager'
 import type { Photo } from '../types'
 
@@ -7,15 +7,20 @@ interface PhotoDisplayProps {
   transition: 'fade' | 'slide' | 'dissolve' | 'none'
   layout: 'single' | 'dual' | 'blurred-bg'
   getPreloadedImageUrl?: (photoId: string) => string | null
+  onVideoEnd?: () => void
+  videoPlayback?: 'full' | 'duration'
+  videoDuration?: number
 }
 
-export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl }: PhotoDisplayProps) {
+export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoDuration }: PhotoDisplayProps) {
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('')
   const [previousImageSrc, setPreviousImageSrc] = useState<string>('')
   const [currentImageLoaded, setCurrentImageLoaded] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [currentPhotoId, setCurrentPhotoId] = useState<string>('')
   const [previousPhotoId, setPreviousPhotoId] = useState<string>('')
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const previousVideoRef = useRef<HTMLVideoElement>(null)
   
   console.log('PhotoDisplay render:', {
     photoId: photo.id,
@@ -45,11 +50,11 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
       setCurrentImageSrc('')
     }
     
-    // Check if image is preloaded first
+    // Check if image is preloaded first (only for images, not videos)
     if (isNewPhoto) {
-      const preloadedUrl = getPreloadedImageUrl?.(photo.id)
+      const preloadedUrl = photo.type !== 'VIDEO' ? getPreloadedImageUrl?.(photo.id) : null
       
-      if (preloadedUrl) {
+      if (preloadedUrl && photo.type !== 'VIDEO') {
         console.log('Using preloaded image:', photo.id, preloadedUrl)
         setCurrentImageSrc(preloadedUrl)
         // Image is already loaded, so mark as loaded immediately
@@ -77,22 +82,28 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
           setPreviousPhotoId('')
         }
       } else {
-        // Fallback: Fetch image with authentication and create object URL
-        const loadImage = async () => {
-          try {
-            console.log('Fetching image with auth (not preloaded):', photo.url)
-            const blob = await photoSourceManager.getPhotoBlob(photo.source, photo.url)
-            const objectUrl = URL.createObjectURL(blob)
-            console.log('Created object URL:', objectUrl)
-            setCurrentImageSrc(objectUrl)
-          } catch (error) {
-            console.error('Failed to load image:', error)
-            // Fallback to direct URL (might not work but worth trying)
-            setCurrentImageSrc(photo.url)
+        // For videos, stream directly without preloading. For images, fetch with auth
+        if (photo.type === 'VIDEO') {
+          console.log('Setting video URL directly:', photo.url)
+          setCurrentImageSrc(photo.url)
+        } else {
+          // Fallback: Fetch image with authentication and create object URL
+          const loadImage = async () => {
+            try {
+              console.log('Fetching image with auth (not preloaded):', photo.url)
+              const blob = await photoSourceManager.getPhotoBlob(photo.source, photo.url)
+              const objectUrl = URL.createObjectURL(blob)
+              console.log('Created object URL:', objectUrl)
+              setCurrentImageSrc(objectUrl)
+            } catch (error) {
+              console.error('Failed to load image:', error)
+              // Fallback to direct URL (might not work but worth trying)
+              setCurrentImageSrc(photo.url)
+            }
           }
+          
+          loadImage()
         }
-        
-        loadImage()
       }
     }
     
@@ -108,27 +119,57 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
     // Only update loaded state if not already loaded (for non-preloaded images)
     if (!currentImageLoaded) {
       setCurrentImageLoaded(true)
-      
-      if (transition === 'dissolve' && previousImageSrc && previousPhotoId && previousPhotoId !== currentPhotoId) {
-        // Start dissolve transition immediately when new image is ready
-        console.log('Starting dissolve transition (fallback load) from', previousPhotoId, 'to', currentPhotoId)
-        setIsTransitioning(true)
+      startTransitionIfNeeded()
+    }
+  }
+  
+  const handleVideoCanPlay = () => {
+    console.log('Video can play:', currentImageSrc)
+    if (!currentImageLoaded) {
+      setCurrentImageLoaded(true)
+      startTransitionIfNeeded()
+      // Auto-play video
+      if (videoRef.current) {
+        videoRef.current.play().catch(e => console.warn('Video autoplay failed:', e))
         
-        // End transition after animation completes
-        setTimeout(() => {
-          setIsTransitioning(false)
-          // Clean up previous image
-          if (previousImageSrc && previousImageSrc.startsWith('blob:')) {
-            URL.revokeObjectURL(previousImageSrc)
-          }
-          setPreviousImageSrc('')
-          setPreviousPhotoId('')
-        }, 1500) // Match dissolve animation duration
-      } else {
-        // No previous photo or same photo, clear without transition
+        // Set up duration limit if needed
+        if (videoPlayback === 'duration' && videoDuration && onVideoEnd) {
+          setTimeout(() => {
+            console.log(`Video duration limit reached: ${videoDuration}s`)
+            onVideoEnd()
+          }, videoDuration * 1000)
+        }
+      }
+    }
+  }
+  
+  const handleVideoEnded = () => {
+    console.log('Video ended naturally')
+    if (videoPlayback === 'full' && onVideoEnd) {
+      onVideoEnd()
+    }
+  }
+  
+  const startTransitionIfNeeded = () => {
+    if (transition === 'dissolve' && previousImageSrc && previousPhotoId && previousPhotoId !== currentPhotoId) {
+      // Start dissolve transition immediately when new media is ready
+      console.log('Starting dissolve transition (fallback load) from', previousPhotoId, 'to', currentPhotoId)
+      setIsTransitioning(true)
+      
+      // End transition after animation completes
+      setTimeout(() => {
+        setIsTransitioning(false)
+        // Clean up previous media
+        if (previousImageSrc && previousImageSrc.startsWith('blob:')) {
+          URL.revokeObjectURL(previousImageSrc)
+        }
         setPreviousImageSrc('')
         setPreviousPhotoId('')
-      }
+      }, 1500) // Match dissolve animation duration
+    } else {
+      // No previous photo or same photo, clear without transition
+      setPreviousImageSrc('')
+      setPreviousPhotoId('')
     }
   }
   
@@ -178,6 +219,37 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
     
   // Use object-cover for landscape photos to fill screen, object-contain for portrait
   const imageObjectFit = isLandscape ? 'object-cover' : 'object-contain'
+  
+  // Helper function to render media (image or video)
+  const renderMedia = (src: string, isVideo: boolean, isPrevious: boolean = false, className: string = '') => {
+    if (isVideo) {
+      return (
+        <video
+          ref={isPrevious ? previousVideoRef : videoRef}
+          src={src}
+          className={`photo-image w-full h-full ${imageObjectFit} ${className}`}
+          onCanPlay={isPrevious ? undefined : handleVideoCanPlay}
+          onEnded={isPrevious ? undefined : handleVideoEnded}
+          onError={handleImageError}
+          autoPlay
+          muted
+          loop={videoPlayback === 'duration'} // Only loop if duration limited
+          controls={false}
+          playsInline
+        />
+      )
+    } else {
+      return (
+        <img
+          src={src}
+          alt={isPrevious ? 'Previous photo' : (photo.metadata?.title || 'Photo')}
+          className={`photo-image w-full h-full ${imageObjectFit} ${className}`}
+          onLoad={isPrevious ? undefined : handleCurrentImageLoad}
+          onError={handleImageError}
+        />
+      )
+    }
+  }
 
   if (layout === 'blurred-bg' && isPortrait) {
     return (
@@ -188,26 +260,16 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
           style={{ backgroundImage: `url(${currentImageSrc})` }}
         />
         
-        {/* Previous image (for dissolve transition) */}
+        {/* Previous media (for dissolve transition) */}
         {previousImageSrc && transition === 'dissolve' && previousPhotoId && previousPhotoId !== currentPhotoId && (
           <div className="absolute inset-0 z-10">
-            <img
-              src={previousImageSrc}
-              alt="Previous photo"
-              className={`photo-image w-full h-full ${imageObjectFit} ${getPreviousImageClass()}`}
-            />
+            {renderMedia(previousImageSrc, photo.type === 'VIDEO', true, getPreviousImageClass())}
           </div>
         )}
         
-        {/* Current photo */}
+        {/* Current media */}
         <div className="absolute inset-0 z-20">
-          <img
-            src={currentImageSrc}
-            alt={photo.metadata?.title || 'Photo'}
-            className={`photo-image w-full h-full ${imageObjectFit} ${getCurrentImageClass()}`}
-            onLoad={handleCurrentImageLoad}
-            onError={handleImageError}
-          />
+          {renderMedia(currentImageSrc, photo.type === 'VIDEO', false, getCurrentImageClass())}
         </div>
       </div>
     )
@@ -217,23 +279,13 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
   // For now, default to single photo display
   return (
     <div className="photo-display relative">
-      {/* Previous image (for dissolve transition) */}
+      {/* Previous media (for dissolve transition) */}
       {previousImageSrc && transition === 'dissolve' && previousPhotoId && previousPhotoId !== currentPhotoId && (
-        <img
-          src={previousImageSrc}
-          alt="Previous photo"
-          className={`photo-image absolute inset-0 w-full h-full ${imageObjectFit} ${getPreviousImageClass()}`}
-        />
+        renderMedia(previousImageSrc, photo.type === 'VIDEO', true, `absolute inset-0 ${getPreviousImageClass()}`)
       )}
       
-      {/* Current image */}
-      <img
-        src={currentImageSrc}
-        alt={photo.metadata?.title || 'Photo'}
-        className={`photo-image absolute inset-0 w-full h-full ${imageObjectFit} ${getCurrentImageClass()}`}
-        onLoad={handleCurrentImageLoad}
-        onError={handleImageError}
-      />
+      {/* Current media */}
+      {renderMedia(currentImageSrc, photo.type === 'VIDEO', false, `absolute inset-0 ${getCurrentImageClass()}`)}
     </div>
   )
 }

@@ -12,17 +12,17 @@ export interface PhotoSourceAPI {
   getAlbums(): Promise<Album[]>
 
   /**
-   * Get photos from specified albums
+   * Get photos and videos from specified albums
    */
   getPhotos(albumIds?: string[]): Promise<Photo[]>
 
   /**
-   * Get a specific photo by ID
+   * Get a specific photo or video by ID
    */
   getPhoto(photoId: string): Promise<Photo | null>
 
   /**
-   * Get photo blob for caching
+   * Get photo blob for caching (only used for images, not videos)
    */
   getPhotoBlob(photoUrl: string): Promise<Blob>
 }
@@ -31,7 +31,7 @@ export interface Album {
   id: string
   name: string
   description?: string
-  photoCount: number
+  photoCount: number // Includes both photos and videos
   thumbnailUrl?: string
 }
 

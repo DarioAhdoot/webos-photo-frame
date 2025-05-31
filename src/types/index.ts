@@ -21,6 +21,8 @@ export interface Photo {
   metadata?: PhotoMetadata
   source: string
   albumId?: string
+  type?: 'IMAGE' | 'VIDEO'
+  duration?: string
 }
 
 export interface PhotoMetadata {
@@ -42,9 +44,11 @@ export interface CachedPhoto extends Photo {
 }
 
 export interface SlideshowSettings {
-  interval: number // seconds
+  interval: number // seconds for photos
   transition: 'fade' | 'slide' | 'none'
   order: 'random' | 'sequential'
+  videoPlayback: 'full' | 'duration' // Play full video or limit to duration
+  videoDuration: number // seconds - max duration when videoPlayback is 'duration'
 }
 
 export interface LayoutSettings {

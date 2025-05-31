@@ -47,7 +47,7 @@ export default function SlideshowSettings() {
         <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">
-              Interval (seconds): {settings.slideshow.interval}
+              Photo Interval (seconds): {settings.slideshow.interval}
             </label>
             <input
               type="range"
@@ -60,6 +60,9 @@ export default function SlideshowSettings() {
             <div className="flex justify-between text-xs text-gray-500 mt-1">
               <span>1s</span>
               <span>60s</span>
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              How long to display each photo
             </div>
           </div>
 
@@ -77,7 +80,7 @@ export default function SlideshowSettings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Photo Order</label>
+            <label className="block text-sm font-medium mb-2">Media Order</label>
             <select
               value={settings.slideshow.order}
               onChange={(e) => handleSlideshowChange('order', e.target.value)}
@@ -87,6 +90,51 @@ export default function SlideshowSettings() {
               <option value="sequential">Sequential</option>
             </select>
           </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Video Settings</h2>
+        
+        <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Video Playback Mode</label>
+            <select
+              value={settings.slideshow.videoPlayback}
+              onChange={(e) => handleSlideshowChange('videoPlayback', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md"
+            >
+              <option value="full">Play Full Video</option>
+              <option value="duration">Limit Duration</option>
+            </select>
+            <div className="text-xs text-gray-500 mt-1">
+              Whether to play videos completely or limit to a maximum duration
+            </div>
+          </div>
+
+          {settings.slideshow.videoPlayback === 'duration' && (
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Maximum Video Duration (seconds): {settings.slideshow.videoDuration}
+              </label>
+              <input
+                type="range"
+                min="5"
+                max="300"
+                step="5"
+                value={settings.slideshow.videoDuration}
+                onChange={(e) => handleSlideshowChange('videoDuration', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>5s</span>
+                <span>5min</span>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                Videos longer than this will advance to the next item after this duration
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

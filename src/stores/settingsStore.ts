@@ -16,6 +16,8 @@ const defaultSettings: AppSettings = {
     interval: 10,
     transition: 'fade',
     order: 'random',
+    videoPlayback: 'full',
+    videoDuration: 30,
   },
   layout: {
     portraitLayout: 'single',

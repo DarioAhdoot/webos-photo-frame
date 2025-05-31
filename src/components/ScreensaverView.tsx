@@ -65,12 +65,31 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   useEffect(() => {
     if (photos.length === 0) return
 
+    const currentPhoto = photos[currentPhotoIndex]
+    if (!currentPhoto) return
+
+    let duration: number
+
+    if (currentPhoto.type === 'VIDEO') {
+      if (settings.slideshow.videoPlayback === 'full') {
+        // For full video playback, we'll let the video component handle advancing
+        // Don't set an interval here - the video will trigger advancement on end
+        return
+      } else {
+        // Use the configured video duration limit
+        duration = settings.slideshow.videoDuration * 1000
+      }
+    } else {
+      // Use photo interval for images
+      duration = settings.slideshow.interval * 1000
+    }
+
     const interval = setInterval(() => {
       nextPhoto()
-    }, settings.slideshow.interval * 1000)
+    }, duration)
 
     return () => clearInterval(interval)
-  }, [photos.length, settings.slideshow.interval, nextPhoto])
+  }, [photos.length, settings.slideshow.interval, settings.slideshow.videoPlayback, settings.slideshow.videoDuration, nextPhoto, currentPhotoIndex])
 
   // Setup event listeners
   useEffect(() => {
@@ -164,6 +183,9 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
         transition={settings.slideshow.transition}
         layout={settings.layout.portraitLayout}
         getPreloadedImageUrl={getPreloadedImageUrl}
+        onVideoEnd={nextPhoto}
+        videoPlayback={settings.slideshow.videoPlayback}
+        videoDuration={settings.slideshow.videoDuration}
       />
       
       {settings.display.showMetadata && (

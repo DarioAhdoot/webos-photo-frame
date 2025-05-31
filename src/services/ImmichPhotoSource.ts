@@ -226,7 +226,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
     const album: ImmichAlbum & { assets: ImmichAsset[] } = await response.json()
     
     return album.assets
-      .filter(asset => asset.type === 'IMAGE') // Only include images, not videos
+      .filter(asset => asset.type === 'IMAGE' || asset.type === 'VIDEO') // Include both images and videos
       .map(asset => this.mapAssetToPhoto(asset, albumId))
   }
 
@@ -254,6 +254,8 @@ export class ImmichPhotoSource extends PhotoSourceBase {
       metadata,
       source: this.config.id,
       albumId,
+      type: asset.type,
+      duration: asset.duration,
     }
   }
 

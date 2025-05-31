@@ -22,6 +22,10 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   const hasConfiguredSources = photoSources.some(source => source.enabled)
   const hasPhotos = photos.length > 0
   
+  // Count photos and videos separately
+  const photoCount = photos.filter(photo => photo.type !== 'VIDEO').length
+  const videoCount = photos.filter(photo => photo.type === 'VIDEO').length
+  
   console.log('Settings Debug:', {
     photoSources,
     hasConfiguredSources,
@@ -90,7 +94,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
           <div className="flex gap-3 items-center">
             {/* Debug info */}
             <div className="text-sm text-gray-500">
-              Sources: {photoSources.length} | Enabled: {photoSources.filter(s => s.enabled).length} | Photos: {photos.length}
+              Sources: {photoSources.length} | Enabled: {photoSources.filter(s => s.enabled).length} | Photos: {photoCount} | Videos: {videoCount}
             </div>
             
             <button
