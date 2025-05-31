@@ -67,28 +67,70 @@ export default function SlideshowSettings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Transition Effect</label>
-            <select
-              value={settings.slideshow.transition}
-              onChange={(e) => handleSlideshowChange('transition', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            >
-              <option value="fade">Fade (Recommended)</option>
-              <option value="slide">Slide</option>
-              <option value="none">None</option>
-            </select>
+            <label className="block text-sm font-medium mb-3">Transition Effect</label>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="transition"
+                  value="fade"
+                  checked={settings.slideshow.transition === 'fade'}
+                  onChange={(e) => handleSlideshowChange('transition', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Fade (Recommended)</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="transition"
+                  value="slide"
+                  checked={settings.slideshow.transition === 'slide'}
+                  onChange={(e) => handleSlideshowChange('transition', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Slide</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="transition"
+                  value="none"
+                  checked={settings.slideshow.transition === 'none'}
+                  onChange={(e) => handleSlideshowChange('transition', e.target.value)}
+                  className="mr-3"
+                />
+                <span>None</span>
+              </label>
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Media Order</label>
-            <select
-              value={settings.slideshow.order}
-              onChange={(e) => handleSlideshowChange('order', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            >
-              <option value="random">Random</option>
-              <option value="sequential">Sequential</option>
-            </select>
+            <label className="block text-sm font-medium mb-3">Media Order</label>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="order"
+                  value="random"
+                  checked={settings.slideshow.order === 'random'}
+                  onChange={(e) => handleSlideshowChange('order', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Random</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="order"
+                  value="sequential"
+                  checked={settings.slideshow.order === 'sequential'}
+                  onChange={(e) => handleSlideshowChange('order', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Sequential</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -98,16 +140,32 @@ export default function SlideshowSettings() {
         
         <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Video Playback Mode</label>
-            <select
-              value={settings.slideshow.videoPlayback}
-              onChange={(e) => handleSlideshowChange('videoPlayback', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            >
-              <option value="full">Play Full Video</option>
-              <option value="duration">Limit Duration</option>
-            </select>
-            <div className="text-xs text-gray-500 mt-1">
+            <label className="block text-sm font-medium mb-3">Video Playback Mode</label>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="videoPlayback"
+                  value="full"
+                  checked={settings.slideshow.videoPlayback === 'full'}
+                  onChange={(e) => handleSlideshowChange('videoPlayback', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Play Full Video</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="videoPlayback"
+                  value="duration"
+                  checked={settings.slideshow.videoPlayback === 'duration'}
+                  onChange={(e) => handleSlideshowChange('videoPlayback', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Limit Duration</span>
+              </label>
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
               Whether to play videos completely or limit to a maximum duration
             </div>
           </div>
@@ -143,17 +201,43 @@ export default function SlideshowSettings() {
         
         <div className="bg-white p-6 rounded-lg border shadow-sm">
           <div>
-            <label className="block text-sm font-medium mb-2">Portrait Photo Layout</label>
-            <select
-              value={settings.layout.portraitLayout}
-              onChange={(e) => handleLayoutChange('portraitLayout', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            >
-              <option value="single">Single Photo</option>
-              <option value="dual">Two Photos Side by Side</option>
-              <option value="blurred-bg">Photo with Blurred Background</option>
-            </select>
-            <div className="text-xs text-gray-500 mt-1">
+            <label className="block text-sm font-medium mb-3">Portrait Photo Layout</label>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="portraitLayout"
+                  value="single"
+                  checked={settings.layout.portraitLayout === 'single'}
+                  onChange={(e) => handleLayoutChange('portraitLayout', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Single Photo</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="portraitLayout"
+                  value="dual"
+                  checked={settings.layout.portraitLayout === 'dual'}
+                  onChange={(e) => handleLayoutChange('portraitLayout', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Two Photos Side by Side</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="portraitLayout"
+                  value="blurred-bg"
+                  checked={settings.layout.portraitLayout === 'blurred-bg'}
+                  onChange={(e) => handleLayoutChange('portraitLayout', e.target.value)}
+                  className="mr-3"
+                />
+                <span>Photo with Blurred Background</span>
+              </label>
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
               How to display portrait-oriented photos
             </div>
           </div>

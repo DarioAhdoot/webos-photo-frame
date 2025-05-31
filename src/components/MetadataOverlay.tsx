@@ -26,7 +26,8 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
 
   return (
     <div className="metadata-overlay">
-      <div className="flex justify-between items-end">
+      <div className="space-y-3">
+        {/* Photo Information */}
         <div className="photo-info">
           {photo.metadata?.description && (
             <p className="text-sm opacity-90 mb-2">{photo.metadata.description}</p>
@@ -53,8 +54,9 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
           </div>
         </div>
 
+        {/* Weather Information */}
         {showWeather && (
-          <div className="weather-info text-right">
+          <div className="weather-info">
             {weatherLoading && (
               <div className="text-sm opacity-75">Loading weather...</div>
             )}
@@ -64,10 +66,10 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
             )}
             
             {weather && (
-              <div className="space-y-1">
-                <div className="flex items-center justify-end gap-2">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
                   <span className="text-2xl">{weather.icon}</span>
-                  <div className="text-right">
+                  <div>
                     <div className="text-lg font-semibold">
                       {formatTemperature(weather.temperature)}
                     </div>
@@ -77,7 +79,7 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
                   </div>
                 </div>
                 
-                <div className="text-xs opacity-75 text-right">
+                <div className="text-xs opacity-75">
                   <div>{weather.condition}</div>
                   <div>📍 {weather.location}</div>
                   <div>💨 {weather.windSpeed} km/h • 💧 {weather.humidity}%</div>
