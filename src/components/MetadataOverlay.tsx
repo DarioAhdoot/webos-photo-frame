@@ -1,3 +1,5 @@
+import { useWeather } from '../hooks/useWeather'
+import { WeatherService } from '../services/WeatherService'
 import type { Photo } from '../types'
 
 interface MetadataOverlayProps {
@@ -6,6 +8,8 @@ interface MetadataOverlayProps {
 }
 
 export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayProps) {
+  const { weather, isLoading: weatherLoading, error: weatherError } = useWeather(showWeather)
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return null
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -13,6 +17,11 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
       month: 'long',
       day: 'numeric',
     })
+  }
+
+  const formatTemperature = (celsius: number) => {
+    const fahrenheit = WeatherService.celsiusToFahrenheit(celsius)
+    return `${celsius}°C / ${fahrenheit}°F`
   }
 
   return (
@@ -46,8 +55,35 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
 
         {showWeather && (
           <div className="weather-info text-right">
-            {/* TODO: Implement weather data */}
-            <div className="text-sm opacity-75">Weather data coming soon</div>
+            {weatherLoading && (
+              <div className="text-sm opacity-75">Loading weather...</div>
+            )}
+            
+            {weatherError && (
+              <div className="text-xs opacity-60">Weather unavailable</div>
+            )}
+            
+            {weather && (
+              <div className="space-y-1">
+                <div className="flex items-center justify-end gap-2">
+                  <span className="text-2xl">{weather.icon}</span>
+                  <div className="text-right">
+                    <div className="text-lg font-semibold">
+                      {formatTemperature(weather.temperature)}
+                    </div>
+                    <div className="text-xs opacity-75">
+                      Feels like {formatTemperature(weather.feelsLike)}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-xs opacity-75 text-right">
+                  <div>{weather.condition}</div>
+                  <div>📍 {weather.location}</div>
+                  <div>💨 {weather.windSpeed} km/h • 💧 {weather.humidity}%</div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -69,8 +69,14 @@ export interface AppSettings {
 
 export interface WeatherData {
   temperature: number
+  feelsLike: number
   condition: string
+  description: string
+  humidity: number
+  windSpeed: number
   location: string
+  icon: string
+  timestamp: number
 }
 
 export interface AppState {
