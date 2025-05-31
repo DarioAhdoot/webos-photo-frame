@@ -24,32 +24,12 @@ export default function DisplaySettings() {
   return (
     <div className="space-y-8 pb-8">
       <div>
-        <h2 className="text-xl font-semibold mb-4">Display Options</h2>
+        <h2 className="text-xl font-semibold mb-4">Image Quality Settings</h2>
         
-        <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={settings.display.showMetadata}
-              onChange={(e) => handleDisplayChange('showMetadata', e.target.checked)}
-              className="mr-3"
-            />
-            <span>Show Photo Metadata</span>
-          </label>
-
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={settings.display.showWeather}
-              onChange={(e) => handleDisplayChange('showWeather', e.target.checked)}
-              className="mr-3"
-            />
-            <span>Show Weather Information</span>
-          </label>
-
+        <div className="bg-white p-6 rounded-lg border shadow-sm">
           <div>
             <label className="block text-sm font-medium mb-3">Image Resolution</label>
-            <div className="space-y-2">
+            <div className="flex gap-6">
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -81,12 +61,38 @@ export default function DisplaySettings() {
       </div>
 
       <div>
+        <h2 className="text-xl font-semibold mb-4">Display Options</h2>
+        
+        <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={settings.display.showMetadata}
+              onChange={(e) => handleDisplayChange('showMetadata', e.target.checked)}
+              className="mr-3"
+            />
+            <span>Show Photo Metadata</span>
+          </label>
+
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={settings.display.showWeather}
+              onChange={(e) => handleDisplayChange('showWeather', e.target.checked)}
+              className="mr-3"
+            />
+            <span>Show Weather Information</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
         <h2 className="text-xl font-semibold mb-4">Layout Settings</h2>
         
         <div className="bg-white p-6 rounded-lg border shadow-sm">
           <div>
             <label className="block text-sm font-medium mb-3">Portrait Photo Layout</label>
-            <div className="space-y-2">
+            <div className="flex gap-6 flex-wrap">
               <label className="flex items-center">
                 <input
                   type="radio"

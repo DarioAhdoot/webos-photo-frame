@@ -7,6 +7,7 @@ interface AlbumSelectionViewProps {
   photoSource: PhotoSource
   selectedAlbumIds: string[]
   onAlbumToggle: (albumId: string) => void
+  onAlbumBulkSelect?: (albumIds: string[]) => void
   onBack: () => void
   onSave: () => void
 }
@@ -15,6 +16,7 @@ export default function AlbumSelectionView({
   photoSource, 
   selectedAlbumIds, 
   onAlbumToggle, 
+  onAlbumBulkSelect,
   onBack, 
   onSave 
 }: AlbumSelectionViewProps) {
@@ -84,6 +86,33 @@ export default function AlbumSelectionView({
 
   const isAlbumSelected = (albumId: string) => {
     return selectedAlbumIds.includes(albumId)
+  }
+
+  const handleSelectAll = () => {
+    if (onAlbumBulkSelect) {
+      // Use bulk select if available
+      const allAlbumIds = albums.map(album => album.id)
+      onAlbumBulkSelect(allAlbumIds)
+    } else {
+      // Fall back to individual toggles
+      albums.forEach(album => {
+        if (!selectedAlbumIds.includes(album.id)) {
+          onAlbumToggle(album.id)
+        }
+      })
+    }
+  }
+
+  const handleDeselectAll = () => {
+    if (onAlbumBulkSelect) {
+      // Use bulk select with empty array
+      onAlbumBulkSelect([])
+    } else {
+      // Fall back to individual toggles
+      selectedAlbumIds.forEach(albumId => {
+        onAlbumToggle(albumId)
+      })
+    }
   }
 
   if (loading) {
@@ -168,6 +197,24 @@ export default function AlbumSelectionView({
               </p>
             </div>
             <div className="flex gap-3">
+              {albums.length > 0 && (
+                <>
+                  <button
+                    onClick={handleSelectAll}
+                    className="px-3 py-2 text-blue-600 hover:bg-blue-50 rounded border border-blue-200"
+                    disabled={selectedAlbumIds.length === albums.length}
+                  >
+                    Select All
+                  </button>
+                  <button
+                    onClick={handleDeselectAll}
+                    className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded border border-gray-200"
+                    disabled={selectedAlbumIds.length === 0}
+                  >
+                    Deselect All
+                  </button>
+                </>
+              )}
               <button
                 onClick={onBack}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800"

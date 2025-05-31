@@ -18,6 +18,7 @@ const defaultSettings: AppSettings = {
     order: 'random',
     videoPlayback: 'full',
     videoDuration: 30,
+    videoMuted: true,
   },
   layout: {
     portraitLayout: 'single',
@@ -70,6 +71,20 @@ const migrateSettings = (persistedState: any): any => {
     delete settings.network.autoRestart
   }
 
+  // Ensure all slideshow properties exist with defaults
+  if (!settings.slideshow) {
+    settings.slideshow = { ...defaultSettings.slideshow }
+  } else {
+    settings.slideshow = {
+      interval: settings.slideshow.interval ?? defaultSettings.slideshow.interval,
+      transition: settings.slideshow.transition ?? defaultSettings.slideshow.transition,
+      order: settings.slideshow.order ?? defaultSettings.slideshow.order,
+      videoPlayback: settings.slideshow.videoPlayback ?? defaultSettings.slideshow.videoPlayback,
+      videoDuration: settings.slideshow.videoDuration ?? defaultSettings.slideshow.videoDuration,
+      videoMuted: settings.slideshow.videoMuted ?? defaultSettings.slideshow.videoMuted,
+    }
+  }
+
   return persistedState
 }
 
@@ -109,11 +124,25 @@ export const useSettingsStore = create<SettingsStore>()(
       name: 'immich-screensaver-settings',
       onRehydrateStorage: () => (state) => {
         // Ensure settings are properly migrated after rehydration
-        if (state?.settings && !state.settings.network) {
-          console.log('Post-rehydration migration: adding missing network settings')
-          state.settings.network = {
-            maxSizeMB: 100,
-            refreshIntervalHours: 24,
+        if (state?.settings) {
+          if (!state.settings.network) {
+            console.log('Post-rehydration migration: adding missing network settings')
+            state.settings.network = {
+              maxSizeMB: 100,
+              refreshIntervalHours: 24,
+            }
+          }
+          
+          // Ensure all slideshow properties exist
+          if (!state.settings.slideshow) {
+            console.log('Post-rehydration migration: adding missing slideshow settings')
+            state.settings.slideshow = { ...defaultSettings.slideshow }
+          } else {
+            // Fill in any missing slideshow properties
+            state.settings.slideshow = {
+              ...defaultSettings.slideshow,
+              ...state.settings.slideshow,
+            }
           }
         }
       },

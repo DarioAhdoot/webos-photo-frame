@@ -47,8 +47,14 @@ export function usePhotoSources() {
     const refreshInterval = settings?.network?.refreshIntervalHours || 24
     const imageResolution = settings?.display?.imageResolution || 'optimized'
     
+    // Create a more specific query key that includes album configurations
+    const sourceConfigs = enabledSources.map(source => ({
+      id: source.id,
+      albumIds: source.config.albumIds || []
+    })).sort((a, b) => a.id.localeCompare(b.id))
+    
     return useQuery({
-      queryKey: ['all-photos', enabledSources.map(s => s.id).sort(), imageResolution],
+      queryKey: ['all-photos', sourceConfigs, imageResolution],
       queryFn: async () => {
         setLoading(true)
         try {

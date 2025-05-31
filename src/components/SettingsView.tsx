@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useAppStore } from '../stores/appStore'
 import PhotoSourceConfig from './PhotoSourceConfig'
@@ -15,6 +16,7 @@ interface SettingsViewProps {
 export default function SettingsView({ onStartScreensaver }: SettingsViewProps) {
   const { photoSources, updatePhotoSource } = useSettingsStore()
   const { photos } = useAppStore()
+  const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<'sources' | 'slideshow' | 'display' | 'network'>('sources')
   const [albumSelectionView, setAlbumSelectionView] = useState<{
     photoSource: PhotoSource
@@ -68,11 +70,23 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
       }
     })
     
+    // Invalidate photo cache to force refresh with new album selection
+    queryClient.invalidateQueries({ queryKey: ['all-photos'] })
+    
     setAlbumSelectionView(null)
   }
 
   const handleBackFromAlbumSelection = () => {
     setAlbumSelectionView(null)
+  }
+
+  const handleAlbumBulkSelect = (albumIds: string[]) => {
+    if (!albumSelectionView) return
+    
+    setAlbumSelectionView({
+      ...albumSelectionView,
+      selectedAlbumIds: albumIds
+    })
   }
 
   // If album selection view is active, show it instead of main settings
@@ -82,6 +96,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
         photoSource={albumSelectionView.photoSource}
         selectedAlbumIds={albumSelectionView.selectedAlbumIds}
         onAlbumToggle={handleAlbumToggle}
+        onAlbumBulkSelect={handleAlbumBulkSelect}
         onBack={handleBackFromAlbumSelection}
         onSave={handleSaveAlbumSelection}
       />

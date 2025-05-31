@@ -10,9 +10,10 @@ interface PhotoDisplayProps {
   onVideoEnd?: () => void
   videoPlayback?: 'full' | 'duration'
   videoDuration?: number
+  videoMuted?: boolean
 }
 
-export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoDuration }: PhotoDisplayProps) {
+export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoDuration, videoMuted = true }: PhotoDisplayProps) {
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('')
   const [previousImageSrc, setPreviousImageSrc] = useState<string>('')
   const [currentImageLoaded, setCurrentImageLoaded] = useState(false)
@@ -232,7 +233,7 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
           onEnded={isPrevious ? undefined : handleVideoEnded}
           onError={handleImageError}
           autoPlay
-          muted
+          muted={videoMuted}
           loop={videoPlayback === 'duration'} // Only loop if duration limited
           controls={false}
           playsInline

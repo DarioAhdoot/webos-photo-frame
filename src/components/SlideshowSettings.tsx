@@ -20,29 +20,42 @@ export default function SlideshowSettings() {
         
         <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Photo Interval (seconds): {settings.slideshow.interval}
-            </label>
-            <input
-              type="range"
-              min="1"
-              max="60"
-              value={settings.slideshow.interval}
-              onChange={(e) => handleSlideshowChange('interval', parseInt(e.target.value))}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>1s</span>
-              <span>60s</span>
+            <label className="block text-sm font-medium mb-3">Photo Interval</label>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => {
+                  const current = settings.slideshow.interval
+                  const decrement = current > 30 ? 5 : 1
+                  handleSlideshowChange('interval', Math.max(1, current - decrement))
+                }}
+                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                disabled={settings.slideshow.interval <= 1}
+              >
+                ◀
+              </button>
+              <span className="text-lg font-medium min-w-[80px] text-center">
+                {settings.slideshow.interval} second{settings.slideshow.interval !== 1 ? 's' : ''}
+              </span>
+              <button
+                onClick={() => {
+                  const current = settings.slideshow.interval
+                  const increment = current >= 30 ? 5 : 1
+                  handleSlideshowChange('interval', Math.min(60, current + increment))
+                }}
+                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-lg font-bold"
+                disabled={settings.slideshow.interval >= 60}
+              >
+                ▶
+              </button>
             </div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-500 mt-2">
               How long to display each photo
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-3">Transition Effect</label>
-            <div className="space-y-2">
+            <div className="flex gap-6">
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -81,7 +94,7 @@ export default function SlideshowSettings() {
 
           <div>
             <label className="block text-sm font-medium mb-3">Media Order</label>
-            <div className="space-y-2">
+            <div className="flex gap-6">
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -115,7 +128,7 @@ export default function SlideshowSettings() {
         <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
           <div>
             <label className="block text-sm font-medium mb-3">Video Playback Mode</label>
-            <div className="space-y-2">
+            <div className="flex gap-6 items-center flex-wrap">
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -138,35 +151,51 @@ export default function SlideshowSettings() {
                 />
                 <span>Limit Duration</span>
               </label>
+              
+              {settings.slideshow.videoPlayback === 'duration' && (
+                <div className="flex items-center gap-3 ml-4">
+                  <span className="text-sm text-gray-600">Max:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleSlideshowChange('videoDuration', Math.max(5, settings.slideshow.videoDuration - 5))}
+                      className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
+                      disabled={settings.slideshow.videoDuration <= 5}
+                    >
+                      ◀
+                    </button>
+                    <span className="text-sm font-medium min-w-[60px] text-center">
+                      {settings.slideshow.videoDuration}s
+                    </span>
+                    <button
+                      onClick={() => handleSlideshowChange('videoDuration', Math.min(300, settings.slideshow.videoDuration + 5))}
+                      className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
+                      disabled={settings.slideshow.videoDuration >= 300}
+                    >
+                      ▶
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="text-xs text-gray-500 mt-2">
               Whether to play videos completely or limit to a maximum duration
             </div>
           </div>
 
-          {settings.slideshow.videoPlayback === 'duration' && (
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Maximum Video Duration (seconds): {settings.slideshow.videoDuration}
-              </label>
+          <div>
+            <label className="flex items-center">
               <input
-                type="range"
-                min="5"
-                max="300"
-                step="5"
-                value={settings.slideshow.videoDuration}
-                onChange={(e) => handleSlideshowChange('videoDuration', parseInt(e.target.value))}
-                className="w-full"
+                type="checkbox"
+                checked={settings.slideshow.videoMuted}
+                onChange={(e) => handleSlideshowChange('videoMuted', e.target.checked)}
+                className="mr-3"
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
-                <span>5s</span>
-                <span>5min</span>
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                Videos longer than this will advance to the next item after this duration
-              </div>
+              <span>Mute video audio</span>
+            </label>
+            <div className="text-xs text-gray-500 mt-1">
+              Whether videos should play with or without sound
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
