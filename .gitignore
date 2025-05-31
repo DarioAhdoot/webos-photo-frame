@@ -116,3 +116,6 @@ coverage/
 
 # Temporary debugging files
 debug.log
+
+# Claude AI specific
+.claude/settings.local.json
