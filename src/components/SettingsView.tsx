@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useAppStore } from '../stores/appStore'
+import { useAllPhotos } from '../hooks/usePhotoSources'
 import PhotoSourceConfig from './PhotoSourceConfig'
 import SlideshowSettings from './SlideshowSettings'
 import DisplaySettings from './DisplaySettings'
@@ -18,6 +19,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   const { photoSources, updatePhotoSource } = useSettingsStore()
   const { photos } = useAppStore()
   const queryClient = useQueryClient()
+  const allPhotosQuery = useAllPhotos()
   const [activeTab, setActiveTab] = useState<'sources' | 'slideshow' | 'video' | 'display' | 'network'>('sources')
   const [albumSelectionView, setAlbumSelectionView] = useState<{
     photoSource: PhotoSource
@@ -25,17 +27,27 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   } | null>(null)
 
   const hasConfiguredSources = photoSources.some(source => source.enabled)
-  const hasPhotos = photos.length > 0
   
-  // Count photos and videos separately
-  const photoCount = photos.filter(photo => photo.type !== 'VIDEO').length
-  const videoCount = photos.filter(photo => photo.type === 'VIDEO').length
+  // Use current query data for real-time counts
+  const currentPhotos = allPhotosQuery.data || photos
+  const hasPhotos = currentPhotos.length > 0
+  
+  // Count photos and videos separately from current data
+  const photoCount = currentPhotos.filter(photo => photo.type !== 'VIDEO').length
+  const videoCount = currentPhotos.filter(photo => photo.type === 'VIDEO').length
   
   console.log('Settings Debug:', {
     photoSources,
     hasConfiguredSources,
     hasPhotos,
-    photosCount: photos.length
+    storedPhotosCount: photos.length,
+    queryPhotosCount: allPhotosQuery.data?.length || 0,
+    currentPhotosCount: currentPhotos.length,
+    photoCount,
+    videoCount,
+    queryStatus: allPhotosQuery.status,
+    isLoading: allPhotosQuery.isLoading,
+    isFetching: allPhotosQuery.isFetching
   })
 
   const handleOpenAlbumSelection = (photoSource: PhotoSource) => {
@@ -113,6 +125,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
             {/* Debug info */}
             <div className="text-sm text-gray-500">
               Sources: {photoSources.length} | Enabled: {photoSources.filter(s => s.enabled).length} | Photos: {photoCount} | Videos: {videoCount}
+              {allPhotosQuery.isFetching && <span className="ml-2 text-blue-500">(refreshing...)</span>}
             </div>
             
             <button
