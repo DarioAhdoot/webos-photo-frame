@@ -53,7 +53,7 @@ export interface SlideshowSettings {
 }
 
 export interface LayoutSettings {
-  portraitLayout: 'single' | 'dual' | 'blurred-bg'
+  portraitBlurredBackground: boolean
 }
 
 export interface DisplaySettings {

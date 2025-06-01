@@ -21,11 +21,11 @@ const defaultSettings: AppSettings = {
     videoMuted: true,
   },
   layout: {
-    portraitLayout: 'single',
+    portraitBlurredBackground: true,
   },
   display: {
-    showMetadata: false,
-    showWeather: false,
+    showMetadata: true,
+    showWeather: true,
     showTime: true,
     imageResolution: 'optimized',
   },
@@ -69,6 +69,21 @@ const migrateSettings = (persistedState: any): any => {
   // Remove old autoRestart property if it exists
   if ('autoRestart' in settings.network) {
     delete settings.network.autoRestart
+  }
+
+  // Migrate old portraitLayout to new portraitBlurredBackground
+  if (settings.layout && 'portraitLayout' in settings.layout) {
+    settings.layout.portraitBlurredBackground = settings.layout.portraitLayout === 'blurred-bg'
+    delete settings.layout.portraitLayout
+  }
+
+  // Ensure layout settings exist with defaults
+  if (!settings.layout) {
+    settings.layout = { ...defaultSettings.layout }
+  } else {
+    settings.layout = {
+      portraitBlurredBackground: settings.layout.portraitBlurredBackground ?? defaultSettings.layout.portraitBlurredBackground,
+    }
   }
 
   // Ensure all slideshow properties exist with defaults

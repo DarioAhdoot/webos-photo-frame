@@ -42,7 +42,7 @@ export default function PhotoSourceConfig({ onEditSource }: PhotoSourceConfigPro
           onClick={handleAddSource}
           className="text-2xl px-8 py-4"
         >
-          Add Immich Source
+          Add photo source
         </Button>
       </div>
 

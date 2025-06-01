@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { photoSourceManager } from '../services/PhotoSourceManager'
+import { useSettingsStore } from '../stores/settingsStore'
 import type { Photo } from '../types'
 
 interface PhotoDisplayProps {
   photo: Photo
   transition: 'fade' | 'slide' | 'dissolve' | 'none' | 'ken-burns'
-  layout: 'single' | 'dual' | 'blurred-bg'
   getPreloadedImageUrl?: (photoId: string) => string | null
   onVideoEnd?: () => void
   videoPlayback?: 'full' | 'duration'
@@ -13,7 +13,8 @@ interface PhotoDisplayProps {
   slideshowInterval?: number
 }
 
-export default function PhotoDisplay({ photo, transition, layout, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
+export default function PhotoDisplay({ photo, transition, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
+  const { settings } = useSettingsStore()
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('')
   const [previousImageSrc, setPreviousImageSrc] = useState<string>('')
   const [currentImageLoaded, setCurrentImageLoaded] = useState(false)
@@ -301,7 +302,7 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
     }
   }
 
-  if (layout === 'blurred-bg' && isPortrait) {
+  if (settings.layout.portraitBlurredBackground && isPortrait) {
     return (
       <div className="photo-display relative">
         {/* Blurred background */}
@@ -325,8 +326,7 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
     )
   }
 
-  // TODO: Implement dual layout for portrait photos
-  // For now, default to single photo display
+  // Default single photo display
   return (
     <div className="photo-display relative">
       {/* Previous media (for dissolve transition) */}

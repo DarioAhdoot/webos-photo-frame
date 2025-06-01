@@ -173,7 +173,6 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
       <PhotoDisplay 
         photo={currentPhoto} 
         transition={settings.slideshow.transition}
-        layout={settings.layout.portraitLayout}
         getPreloadedImageUrl={getPreloadedImageUrl}
         onVideoEnd={handleNextPhoto}
         videoPlayback={settings.slideshow.videoPlayback}

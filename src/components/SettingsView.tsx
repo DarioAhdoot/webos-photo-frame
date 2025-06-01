@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useAppStore } from '../stores/appStore'
 import { useAllPhotos } from '../hooks/usePhotoSources'
+import { Button } from './ui'
 import PhotoSourceConfig from './PhotoSourceConfig'
 import PhotoSourceEdit from './PhotoSourceEdit'
 import PhotoIntervalSettings from './PhotoIntervalSettings'
@@ -155,7 +156,9 @@ export default function SettingsView({ onStartSlideshow, initialEditingSource }:
               {allPhotosQuery.isFetching && <span className="ml-2 text-blue-400">(refreshing...)</span>}
             </div>
             
-            <button
+            <Button
+              variant="primary"
+              size="md"
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
@@ -165,15 +168,10 @@ export default function SettingsView({ onStartSlideshow, initialEditingSource }:
                 }, 100)
               }}
               disabled={!hasConfiguredSources}
-              className={`px-6 py-2 rounded-lg font-medium ${
-                hasConfiguredSources
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-              }`}
               title={!hasConfiguredSources ? 'Enable at least one photo source first' : ''}
             >
-              Start Slideshow
-            </button>
+              Start slideshow
+            </Button>
           </div>
         </div>
       </header>
