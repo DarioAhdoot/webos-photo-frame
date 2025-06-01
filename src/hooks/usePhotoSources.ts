@@ -41,6 +41,7 @@ export function usePhotoSources() {
   // Query to get all photos from enabled sources
   const useAllPhotos = () => {
     const { settings } = useSettingsStore()
+    const { currentMode } = useAppStore()
     const enabledSources = photoSources.filter(source => source.enabled)
     
     // Safety check for network settings
@@ -73,7 +74,7 @@ export function usePhotoSources() {
       enabled: enabledSources.length > 0,
       staleTime: refreshInterval * 60 * 60 * 1000, // Use configured refresh interval
       gcTime: 30 * 60 * 1000, // 30 minutes
-      refetchInterval: refreshInterval * 60 * 60 * 1000, // Auto-refresh at interval
+      refetchInterval: currentMode === 'screensaver' ? refreshInterval * 60 * 60 * 1000 : false, // Pause auto-refresh in settings
     })
   }
 
