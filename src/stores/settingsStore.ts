@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { PhotoSource, AppSettings } from '../types'
+import { photoSourceManager } from '../services/PhotoSourceManager'
+import { photoCacheManager } from '../services/PhotoCacheManager'
 
 interface SettingsStore {
   photoSources: PhotoSource[]
@@ -113,6 +115,11 @@ export const useSettingsStore = create<SettingsStore>()(
         set((state) => ({
           photoSources: [...state.photoSources, source],
         }))
+        
+        // Invalidate caches when photo sources change
+        photoSourceManager.invalidateAllCaches().catch(error => {
+          console.error('Failed to invalidate caches after adding photo source:', error)
+        })
       },
 
       updatePhotoSource: (id, updates) => {
@@ -121,18 +128,54 @@ export const useSettingsStore = create<SettingsStore>()(
             source.id === id ? { ...source, ...updates } : source
           ),
         }))
+        
+        // Invalidate caches when photo sources change
+        photoSourceManager.invalidateAllCaches().catch(error => {
+          console.error('Failed to invalidate caches after updating photo source:', error)
+        })
       },
 
       removePhotoSource: (id) => {
         set((state) => ({
           photoSources: state.photoSources.filter((source) => source.id !== id),
         }))
+        
+        // Remove from photo source manager and invalidate caches
+        photoSourceManager.removeSource(id)
+        photoSourceManager.invalidateAllCaches().catch(error => {
+          console.error('Failed to invalidate caches after removing photo source:', error)
+        })
       },
 
       updateSettings: (newSettings) => {
-        set((state) => ({
-          settings: { ...state.settings, ...newSettings },
-        }))
+        set((state) => {
+          const oldSettings = state.settings
+          const updatedSettings = { ...oldSettings, ...newSettings }
+          
+          // Check if image quality setting changed
+          const imageQualityChanged = newSettings.display && 
+            oldSettings.display.imageResolution !== newSettings.display.imageResolution
+          
+          // Check if cache size changed
+          const cacheSizeChanged = newSettings.network && 
+            oldSettings.network.maxSizeMB !== newSettings.network.maxSizeMB
+          
+          // Invalidate cache when image quality changes
+          if (imageQualityChanged) {
+            photoSourceManager.invalidateAllCaches().catch(error => {
+              console.error('Failed to invalidate caches after image quality change:', error)
+            })
+          }
+          
+          // Update cache size when it changes
+          if (cacheSizeChanged && newSettings.network) {
+            photoCacheManager.updateMaxSize(newSettings.network.maxSizeMB).catch(error => {
+              console.error('Failed to update cache size:', error)
+            })
+          }
+          
+          return { settings: updatedSettings }
+        })
       },
     }),
     {

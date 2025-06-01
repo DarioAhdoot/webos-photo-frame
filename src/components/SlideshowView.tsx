@@ -2,10 +2,12 @@ import { useEffect, useCallback, useState } from 'react'
 import { useAppStore } from '../stores/appStore'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useAllPhotos } from '../hooks/usePhotoSources'
-import { useImagePreloader } from '../hooks/useImagePreloader'
+import { useCachedPhotoLoader } from '../hooks/useCachedPhotoLoader'
+import { photoSourceManager } from '../services/PhotoSourceManager'
 import PhotoDisplay from './PhotoDisplay'
 import MetadataOverlay from './MetadataOverlay'
 import FloatingSettingsButton from './FloatingSettingsButton'
+import OfflineIndicator from './OfflineIndicator'
 
 interface SlideshowViewProps {
   onExit: () => void
@@ -13,7 +15,7 @@ interface SlideshowViewProps {
 
 export default function SlideshowView({ onExit }: SlideshowViewProps) {
   const { photos, currentPhotoIndex, nextPhoto } = useAppStore()
-  const { settings } = useSettingsStore()
+  const { settings, photoSources } = useSettingsStore()
   const { isLoading, error } = useAllPhotos()
   const [clickToExitEnabled, setClickToExitEnabled] = useState(false)
 
@@ -22,12 +24,15 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
     nextPhoto() // Automatically restarts when reaching the end
   }, [nextPhoto])
   
-  // Preload images for smooth transitions
-  const { getPreloadedImageUrl } = useImagePreloader(
+  // Use cached photo loader for offline support
+  const { getCachedPhotoUrl, isOffline } = useCachedPhotoLoader(
     photos, 
     currentPhotoIndex, 
-    3 // Preload 3 images ahead
+    3 // Cache 3 images ahead
   )
+  
+  // Get offline source names for display
+  const offlineSourceNames = photoSourceManager.getOfflineSourceNames(photoSources.filter(s => s.enabled))
   
   
   // Enable click-to-exit after a short delay to prevent accidental exits
@@ -174,7 +179,7 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
       <PhotoDisplay 
         photo={currentPhoto} 
         transition={settings.slideshow.transition}
-        getPreloadedImageUrl={getPreloadedImageUrl}
+        getCachedPhotoUrl={getCachedPhotoUrl}
         onVideoEnd={handleNextPhoto}
         videoPlayback={settings.slideshow.videoPlayback}
         videoMuted={settings.slideshow.videoMuted}
@@ -190,6 +195,11 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
       )}
       
       <FloatingSettingsButton onOpenSettings={onExit} />
+      
+      <OfflineIndicator 
+        isOffline={isOffline}
+        offlineSourceNames={offlineSourceNames}
+      />
     </div>
   )
 }

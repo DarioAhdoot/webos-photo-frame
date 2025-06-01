@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { photoSourceManager } from '../services/PhotoSourceManager'
 import { useSettingsStore } from '../stores/settingsStore'
+import { photoSourceManager } from '../services/PhotoSourceManager'
 import type { Photo } from '../types'
 
 interface PhotoDisplayProps {
   photo: Photo
   transition: 'fade' | 'slide' | 'dissolve' | 'none' | 'ken-burns'
-  getPreloadedImageUrl?: (photoId: string) => string | null
+  getCachedPhotoUrl?: (photoId: string) => string | null
   onVideoEnd?: () => void
   videoPlayback?: 'full' | 'duration'
   videoMuted?: boolean
   slideshowInterval?: number
 }
 
-export default function PhotoDisplay({ photo, transition, getPreloadedImageUrl, onVideoEnd, videoPlayback, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
+export default function PhotoDisplay({ photo, transition, getCachedPhotoUrl, onVideoEnd, videoPlayback, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
   const { settings } = useSettingsStore()
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('')
   const [previousImageSrc, setPreviousImageSrc] = useState<string>('')
@@ -79,54 +79,71 @@ export default function PhotoDisplay({ photo, transition, getPreloadedImageUrl, 
       }
     }
     
-    // Check if image is preloaded first (only for images, not videos)
+    // Handle media loading based on type
     if (isNewPhoto) {
-      const preloadedUrl = photo.type !== 'VIDEO' ? getPreloadedImageUrl?.(photo.id) : null
-      
-      if (preloadedUrl && photo.type !== 'VIDEO') {
-        setCurrentImageSrc(preloadedUrl)
-        // Image is already loaded, so mark as loaded immediately
-        setCurrentImageLoaded(true)
+      if (photo.type === 'VIDEO') {
+        // Videos need authentication but aren't cached
+        setCurrentImageLoaded(false)
+        const loadVideo = async () => {
+          try {
+            const blob = await photoSourceManager.getPhotoBlob(photo.source, photo.url)
+            const objectUrl = URL.createObjectURL(blob)
+            setCurrentImageSrc(objectUrl)
+            setCurrentImageLoaded(true)
+          } catch (error) {
+            console.error('Failed to load video:', photo.id, error)
+            // Fallback to direct URL (may not work for authenticated sources)
+            setCurrentImageSrc(photo.url)
+            setCurrentImageLoaded(true)
+          }
+        }
+        loadVideo()
         
-        // Trigger transition logic for dissolve if we have a previous photo
+        // For dissolve transition with previous photo
         if (transition === 'dissolve' && previousImageSrc && previousPhotoId && previousPhotoId !== photo.id) {
           setIsTransitioning(true)
           setTimeout(() => {
             setIsTransitioning(false)
             if (previousImageSrc && previousImageSrc.startsWith('blob:')) {
-              // Don't revoke if it's still being used elsewhere
-              const isStillInUse = getPreloadedImageUrl?.(previousPhotoId) === previousImageSrc
-              if (!isStillInUse) {
-                URL.revokeObjectURL(previousImageSrc)
-              }
+              URL.revokeObjectURL(previousImageSrc)
             }
             setPreviousImageSrc('')
             setPreviousPhotoId('')
           }, 1500)
         } else {
-          // No previous photo or same photo, clear without transition
           setPreviousImageSrc('')
           setPreviousPhotoId('')
         }
       } else {
-        // For videos, stream directly without preloading. For images, fetch with auth
-        if (photo.type === 'VIDEO') {
-          setCurrentImageSrc(photo.url)
-        } else {
-          // Fallback: Fetch image with authentication and create object URL
-          const loadImage = async () => {
-            try {
-              const blob = await photoSourceManager.getPhotoBlob(photo.source, photo.url)
-              const objectUrl = URL.createObjectURL(blob)
-              setCurrentImageSrc(objectUrl)
-            } catch (error) {
-              console.error('Failed to load image:', error)
-              // Fallback to direct URL (might not work but worth trying)
-              setCurrentImageSrc(photo.url)
-            }
-          }
+        // Images use cache system
+        const cachedUrl = getCachedPhotoUrl?.(photo.id)
+        
+        if (cachedUrl) {
+          setCurrentImageSrc(cachedUrl)
+          setCurrentImageLoaded(true)
           
-          loadImage()
+          // Trigger transition logic for dissolve if we have a previous photo
+          if (transition === 'dissolve' && previousImageSrc && previousPhotoId && previousPhotoId !== photo.id) {
+            setIsTransitioning(true)
+            setTimeout(() => {
+              setIsTransitioning(false)
+              if (previousImageSrc && previousImageSrc.startsWith('blob:')) {
+                const isStillInUse = getCachedPhotoUrl?.(previousPhotoId) === previousImageSrc
+                if (!isStillInUse) {
+                  URL.revokeObjectURL(previousImageSrc)
+                }
+              }
+              setPreviousImageSrc('')
+              setPreviousPhotoId('')
+            }, 1500)
+          } else {
+            setPreviousImageSrc('')
+            setPreviousPhotoId('')
+          }
+        } else {
+          // Image not yet loaded by cache system, show loading state
+          setCurrentImageSrc('')
+          setCurrentImageLoaded(false)
         }
       }
     }
@@ -135,7 +152,7 @@ export default function PhotoDisplay({ photo, transition, getPreloadedImageUrl, 
     return () => {
       // Don't cleanup here during transitions, handle in transition completion
     }
-  }, [photo.id, photo.url, photo.source, transition, getPreloadedImageUrl, currentPhotoId])
+  }, [photo.id, photo.url, photo.source, transition, getCachedPhotoUrl, currentPhotoId])
 
   const handleCurrentImageLoad = () => {
     
@@ -320,7 +337,7 @@ export default function PhotoDisplay({ photo, transition, getPreloadedImageUrl, 
         
         {/* Current media */}
         <div className="absolute inset-0 z-20">
-          {renderMedia(currentImageSrc, photo.type === 'VIDEO', false, getCurrentImageClass())}
+          {currentImageSrc && renderMedia(currentImageSrc, photo.type === 'VIDEO', false, getCurrentImageClass())}
         </div>
       </div>
     )
@@ -335,7 +352,7 @@ export default function PhotoDisplay({ photo, transition, getPreloadedImageUrl, 
       )}
       
       {/* Current media */}
-      {renderMedia(currentImageSrc, photo.type === 'VIDEO', false, `absolute inset-0 ${getCurrentImageClass()}`)}
+      {currentImageSrc && renderMedia(currentImageSrc, photo.type === 'VIDEO', false, `absolute inset-0 ${getCurrentImageClass()}`)}
     </div>
   )
 }
