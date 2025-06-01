@@ -1,29 +1,29 @@
-# Immich WebOS Photo Slideshow
+# Digital Photo Frame for WebOS
 
-A WebOS slideshow application that displays photos from various sources, with initial support for Immich and designed for extensibility to other photo services.
+Transform your LG WebOS TV into a beautiful digital photo frame. This dedicated photo frame application displays photos from your Immich server with customizable slideshows, weather information, and seamless transitions - perfect for continuous display in your home or office.
 
 ## Features
 
-### Core Functionality
-- **Multi-source photo support**: Generic architecture supporting multiple photo providers
-- **Immich integration**: Full integration with Immich photo management system
-- **Intelligent caching**: Configurable local photo cache (10-1000MB) for offline viewing
-- **Slideshow modes**: Random or sequential photo display with configurable intervals
-- **Transition effects**: Smooth fade and slide transitions between photos
+### Digital Photo Frame Features
+- **Continuous display**: Designed to run indefinitely as a dedicated photo frame
+- **Auto-launch slideshow**: Automatically starts displaying photos when configured
+- **Immich integration**: Connect directly to your Immich photo management system
+- **Intelligent caching**: 10-1000MB local cache for smooth offline operation
+- **Multiple display modes**: Random or sequential photo display with customizable timing
+- **Smooth transitions**: Elegant fade and slide effects between photos
 
-### Display Options
-- **Portrait layout modes**: 
-  - Single photo display
-  - Dual photo side-by-side (coming soon)
-  - Photo with blurred background
-- **Metadata overlay**: Optional display of photo information (title, date, location, camera)
-- **Weather integration**: Optional current weather display (coming soon)
+### Display & Presentation
+- **TV-optimized layouts**: Perfect fit for any TV size and orientation
+- **Portrait photo handling**: Multiple layout options for vertical photos
+- **Weather overlay**: Current weather information display
+- **Photo metadata**: Optional display of photo details (title, date, location, camera)
+- **Gallery mode**: WebOS Type 3 screensaver prevents TV standby during operation
 
-### User Experience
-- **Settings UI**: Comprehensive configuration interface
-- **Persistent settings**: All configurations saved between sessions
-- **Hot reload development**: Fast development iteration
-- **WebOS optimized**: Built specifically for WebOS TV platform
+### Photo Frame Experience
+- **Remote control navigation**: Full TV remote support for easy setup
+- **Persistent operation**: Continues running until manually stopped
+- **Power-friendly**: Optimized for extended continuous display
+- **Zero maintenance**: Set it up once and let it run indefinitely
 
 ## Tech Stack
 
@@ -116,14 +116,15 @@ src/
    - **Server URL**: Your Immich instance URL (e.g., `https://immich.yourserver.com`)
    - **API Key**: Generate in Immich Settings → API Keys
    - **Album IDs**: Specific albums to include (optional, leave empty for all albums)
-4. Enable the source and start the screensaver
+4. Enable the source and start your digital photo frame
 
-### Slideshow Settings
+### Photo Frame Settings
 
-- **Interval**: 1-60 seconds between photo changes
-- **Transition**: Fade, slide, or no transition effects
-- **Order**: Random or sequential photo display
-- **Portrait Layout**: How to display portrait-oriented photos
+- **Display interval**: 1-60 seconds between photo changes
+- **Transition effects**: Fade, slide, or instant transitions
+- **Photo order**: Random or sequential display mode
+- **Portrait layout**: Optimized display options for vertical photos
+- **Continuous operation**: Runs indefinitely until manually stopped
 
 ### Cache Management
 

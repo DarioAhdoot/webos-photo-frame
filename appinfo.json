@@ -4,9 +4,14 @@
   "vendor": "Dario Ahdoot",
   "type": "web",
   "main": "dist/index.html",
-  "title": "Immich Photo Slideshow",
+  "title": "Digital Photo Frame",
   "resolution": "1920x1080",
-  "appDescription": "A WebOS slideshow app that displays photos from various sources including Immich",
+  "appDescription": "Transform your TV into a beautiful digital photo frame. Display photos from Immich servers with customizable slideshows, weather info, and seamless transitions.",
+  "screenSaverProperties": {
+    "preferredType": 3
+  },
+  "useGalleryMode": true,
+  "disableBackHistoryAPI": true,
   "requiredPermissions": [
     "network.access"
   ]
