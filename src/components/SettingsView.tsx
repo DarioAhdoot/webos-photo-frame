@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useAppStore } from '../stores/appStore'
@@ -19,19 +19,28 @@ import type { PhotoSource, ImmichConfig } from '../types'
 
 interface SettingsViewProps {
   onStartScreensaver: () => void
+  initialEditingSource?: PhotoSource | null | undefined
 }
 
-export default function SettingsView({ onStartScreensaver }: SettingsViewProps) {
+export default function SettingsView({ onStartScreensaver, initialEditingSource }: SettingsViewProps) {
   const { photoSources, updatePhotoSource } = useSettingsStore()
   const { photos } = useAppStore()
   const queryClient = useQueryClient()
   const allPhotosQuery = useAllPhotos()
   const [activeTab, setActiveTab] = useState<'sources' | 'photo-interval' | 'transition-effect' | 'media-order' | 'image-quality' | 'display-options' | 'layout' | 'video' | 'photo-refresh' | 'cache'>('sources')
-  const [editingSource, setEditingSource] = useState<PhotoSource | null | undefined>(undefined) // undefined = not editing, null = new source, PhotoSource = editing existing
+  const [editingSource, setEditingSource] = useState<PhotoSource | null | undefined>(initialEditingSource ?? undefined) // undefined = not editing, null = new source, PhotoSource = editing existing
   const [albumSelectionView, setAlbumSelectionView] = useState<{
     photoSource: PhotoSource
     selectedAlbumIds: string[]
   } | null>(null)
+
+  // Update editingSource when initialEditingSource changes
+  useEffect(() => {
+    if (initialEditingSource !== undefined) {
+      setEditingSource(initialEditingSource)
+    }
+  }, [initialEditingSource])
+
 
   const hasConfiguredSources = photoSources.some(source => source.enabled)
   

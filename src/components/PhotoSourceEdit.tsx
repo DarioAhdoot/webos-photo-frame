@@ -89,7 +89,6 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
     } else {
       // For existing sources, compare with original (including authType changes)
       const originalConfig = source.config as ImmichConfig & { authType?: string }
-      const currentConfig = formData.config as ImmichConfig & { authType?: string }
       
       // Check if authType changed from what was originally stored
       const originalAuthType = originalConfig.authType || (originalConfig.apiKey ? 'apiKey' : 'password')
