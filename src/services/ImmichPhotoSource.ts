@@ -99,9 +99,7 @@ export class ImmichPhotoSource extends PhotoSourceBase {
     try {
       // Try the newer API endpoint first (v1.118.0+)
       let testUrl = `${this.baseUrl}/api/server/ping`
-      console.log('Testing connection to (newer API):', testUrl)
       const headers = await this.getHeaders()
-      console.log('Headers:', headers)
       
       let response = await fetch(testUrl, {
         headers,
@@ -111,14 +109,12 @@ export class ImmichPhotoSource extends PhotoSourceBase {
       // If that fails with 404, try the older endpoint
       if (response.status === 404) {
         testUrl = `${this.baseUrl}/api/server-info/ping`
-        console.log('Trying older API endpoint:', testUrl)
         response = await fetch(testUrl, {
           headers,
           mode: 'cors',
         })
       }
       
-      console.log('Response status:', response.status, response.statusText)
       
       if (!response.ok) {
         console.error('Connection test failed:', response.status, response.statusText)
@@ -132,7 +128,6 @@ export class ImmichPhotoSource extends PhotoSourceBase {
         }
       }
       
-      console.log('Connection test successful')
       return true
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('fetch')) {

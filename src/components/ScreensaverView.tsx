@@ -23,18 +23,16 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   }, [nextPhoto])
   
   // Preload images for smooth transitions
-  const { getPreloadedImageUrl, preloadedCount } = useImagePreloader(
+  const { getPreloadedImageUrl } = useImagePreloader(
     photos, 
     currentPhotoIndex, 
     3 // Preload 3 images ahead
   )
   
-  console.log('Preloader status:', { preloadedCount, currentIndex: currentPhotoIndex, totalPhotos: photos.length })
   
   // Enable click-to-exit after a short delay to prevent accidental exits
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log('Click-to-exit enabled')
       setClickToExitEnabled(true)
     }, 1000) // 1 second delay
     
@@ -59,10 +57,8 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
     }
     
     if (clickToExitEnabled) {
-      console.log('Click to exit triggered')
       onExit()
     } else {
-      console.log('Click ignored - too soon after startup')
     }
   }, [onExit, clickToExitEnabled])
 
@@ -157,15 +153,6 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
 
   const currentPhoto = photos[currentPhotoIndex]
   
-  console.log('ScreensaverView render:', {
-    photosLength: photos.length,
-    currentPhotoIndex,
-    currentPhoto: currentPhoto ? {
-      id: currentPhoto.id,
-      url: currentPhoto.url,
-      source: currentPhoto.source
-    } : null
-  })
   
   if (!currentPhoto) {
     return (

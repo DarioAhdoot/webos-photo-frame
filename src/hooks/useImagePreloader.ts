@@ -43,12 +43,10 @@ export function useImagePreloader(photos: Photo[], currentIndex: number, preload
           !preloadedImages.has(photo.id)
         )
 
-        console.log(`Preloading ${newPreloads.length} images starting from index ${currentIndex}`)
 
         // Preload each image
         for (const photo of newPreloads) {
           try {
-            console.log('Preloading photo:', photo.id)
             const blob = await photoSourceManager.getPhotoBlob(photo.source, photo.url)
             const objectUrl = URL.createObjectURL(blob)
             
@@ -58,7 +56,6 @@ export function useImagePreloader(photos: Photo[], currentIndex: number, preload
               blob
             }))
             
-            console.log('Preloaded photo:', photo.id, objectUrl)
           } catch (error) {
             console.error('Failed to preload photo:', photo.id, error)
           }
@@ -72,7 +69,6 @@ export function useImagePreloader(photos: Photo[], currentIndex: number, preload
           // Keep current photo and next few, remove others
           for (const [photoId, preloaded] of prev) {
             if (!currentPhotoIds.has(photoId)) {
-              console.log('Cleaning up old preloaded image:', photoId)
               URL.revokeObjectURL(preloaded.objectUrl)
               newMap.delete(photoId)
             }

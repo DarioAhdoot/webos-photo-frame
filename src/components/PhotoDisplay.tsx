@@ -51,21 +51,12 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
     }
   }
   
-  console.log('PhotoDisplay render:', {
-    photoId: photo.id,
-    photoUrl: photo.url,
-    currentImageSrc,
-    currentImageLoaded,
-    layout,
-    isTransitioning
-  })
 
   useEffect(() => {
     // Track photo changes (not just URL changes)
     const isNewPhoto = photo.id !== currentPhotoId
     
     if (isNewPhoto) {
-      console.log('Photo changed from', currentPhotoId, 'to', photo.id)
       
       // For dissolve transition, keep previous image and photo ID
       if (transition === 'dissolve' && currentImageSrc && currentPhotoId) {
@@ -81,7 +72,6 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
       // Generate Ken Burns animation for new photo (only for images)
       if (transition === 'ken-burns' && photo.type !== 'VIDEO') {
         const newAnimation = generateKenBurnsAnimation()
-        console.log('Generated new Ken Burns animation for photo:', photo.id, newAnimation)
         setKenBurnsAnimation(newAnimation)
       } else {
         setKenBurnsAnimation(null)
@@ -93,14 +83,12 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
       const preloadedUrl = photo.type !== 'VIDEO' ? getPreloadedImageUrl?.(photo.id) : null
       
       if (preloadedUrl && photo.type !== 'VIDEO') {
-        console.log('Using preloaded image:', photo.id, preloadedUrl)
         setCurrentImageSrc(preloadedUrl)
         // Image is already loaded, so mark as loaded immediately
         setCurrentImageLoaded(true)
         
         // Trigger transition logic for dissolve if we have a previous photo
         if (transition === 'dissolve' && previousImageSrc && previousPhotoId && previousPhotoId !== photo.id) {
-          console.log('Starting dissolve transition from', previousPhotoId, 'to', photo.id)
           setIsTransitioning(true)
           setTimeout(() => {
             setIsTransitioning(false)
@@ -122,16 +110,13 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
       } else {
         // For videos, stream directly without preloading. For images, fetch with auth
         if (photo.type === 'VIDEO') {
-          console.log('Setting video URL directly:', photo.url)
           setCurrentImageSrc(photo.url)
         } else {
           // Fallback: Fetch image with authentication and create object URL
           const loadImage = async () => {
             try {
-              console.log('Fetching image with auth (not preloaded):', photo.url)
               const blob = await photoSourceManager.getPhotoBlob(photo.source, photo.url)
               const objectUrl = URL.createObjectURL(blob)
-              console.log('Created object URL:', objectUrl)
               setCurrentImageSrc(objectUrl)
             } catch (error) {
               console.error('Failed to load image:', error)
@@ -152,7 +137,6 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
   }, [photo.id, photo.url, photo.source, transition, getPreloadedImageUrl, currentPhotoId])
 
   const handleCurrentImageLoad = () => {
-    console.log('Current image loaded successfully:', currentImageSrc)
     
     // Only update loaded state if not already loaded (for non-preloaded images)
     if (!currentImageLoaded) {
@@ -162,7 +146,6 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
   }
   
   const handleVideoCanPlay = () => {
-    console.log('Video can play:', currentImageSrc)
     if (!currentImageLoaded) {
       setCurrentImageLoaded(true)
       startTransitionIfNeeded()
@@ -173,7 +156,6 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
         // Set up duration limit if needed
         if (videoPlayback === 'duration' && onVideoEnd) {
           setTimeout(() => {
-            console.log(`Video duration limit reached: ${slideshowInterval}s`)
             onVideoEnd()
           }, slideshowInterval * 1000)
         }
@@ -182,7 +164,6 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
   }
   
   const handleVideoEnded = () => {
-    console.log('Video ended naturally')
     if (videoPlayback === 'full' && onVideoEnd) {
       onVideoEnd()
     }
@@ -191,7 +172,6 @@ export default function PhotoDisplay({ photo, transition, layout, getPreloadedIm
   const startTransitionIfNeeded = () => {
     if (transition === 'dissolve' && previousImageSrc && previousPhotoId && previousPhotoId !== currentPhotoId) {
       // Start dissolve transition immediately when new media is ready
-      console.log('Starting dissolve transition (fallback load) from', previousPhotoId, 'to', currentPhotoId)
       setIsTransitioning(true)
       
       // End transition after animation completes

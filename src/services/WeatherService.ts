@@ -67,7 +67,6 @@ export class WeatherService {
       this.cachedWeather = weather
       this.cacheExpiry = Date.now() + this.CACHE_DURATION
 
-      console.log('Weather data obtained:', weather)
       return weather
 
     } catch (error) {
@@ -103,7 +102,6 @@ export class WeatherService {
       timestamp: Date.now()
     }
 
-    console.log('Using fallback weather data:', mockWeather)
     return mockWeather
   }
 

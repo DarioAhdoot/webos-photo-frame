@@ -54,7 +54,6 @@ export class GeolocationService {
       this.cachedLocation = location
       this.cacheExpiry = Date.now() + this.CACHE_DURATION
 
-      console.log('Geolocation obtained:', location)
       return location
 
     } catch (error) {
@@ -70,7 +69,6 @@ export class GeolocationService {
         timezone: 'America/New_York'
       }
 
-      console.log('Using fallback location:', fallbackLocation)
       return fallbackLocation
     }
   }

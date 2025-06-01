@@ -44,7 +44,6 @@ const migrateSettings = (persistedState: any): any => {
 
   // If we have old cache settings but no network settings, migrate them
   if (settings.cache && !settings.network) {
-    console.log('Migrating old cache settings to network settings')
     settings.network = {
       maxSizeMB: settings.cache.maxSizeMB || 100,
       refreshIntervalHours: 24, // Default value
@@ -126,7 +125,6 @@ export const useSettingsStore = create<SettingsStore>()(
         // Ensure settings are properly migrated after rehydration
         if (state?.settings) {
           if (!state.settings.network) {
-            console.log('Post-rehydration migration: adding missing network settings')
             state.settings.network = {
               maxSizeMB: 100,
               refreshIntervalHours: 24,
@@ -135,7 +133,6 @@ export const useSettingsStore = create<SettingsStore>()(
           
           // Ensure all slideshow properties exist
           if (!state.settings.slideshow) {
-            console.log('Post-rehydration migration: adding missing slideshow settings')
             state.settings.slideshow = { ...defaultSettings.slideshow }
           } else {
             // Fill in any missing slideshow properties

@@ -22,7 +22,6 @@ export const useAppStore = create<AppStore>()(
       userRequestedSettings: false,
 
       setCurrentMode: (mode, userRequested = false) => {
-        console.log('AppStore - setCurrentMode called with:', mode, 'userRequested:', userRequested)
         set({ 
           currentMode: mode,
           userRequestedSettings: mode === 'settings' && userRequested

@@ -35,25 +35,10 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   
   // Use current query data for real-time counts
   const currentPhotos = allPhotosQuery.data || photos
-  const hasPhotos = currentPhotos.length > 0
   
   // Count photos and videos separately from current data
   const photoCount = currentPhotos.filter(photo => photo.type !== 'VIDEO').length
   const videoCount = currentPhotos.filter(photo => photo.type === 'VIDEO').length
-  
-  console.log('Settings Debug:', {
-    photoSources,
-    hasConfiguredSources,
-    hasPhotos,
-    storedPhotosCount: photos.length,
-    queryPhotosCount: allPhotosQuery.data?.length || 0,
-    currentPhotosCount: currentPhotos.length,
-    photoCount,
-    videoCount,
-    queryStatus: allPhotosQuery.status,
-    isLoading: allPhotosQuery.isLoading,
-    isFetching: allPhotosQuery.isFetching
-  })
 
   const handleOpenAlbumSelection = (photoSource: PhotoSource) => {
     const config = photoSource.config as ImmichConfig
@@ -137,7 +122,6 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                console.log('Start Screensaver clicked!', { hasConfiguredSources, onStartScreensaver })
                 // Small delay to prevent event bubbling issues
                 setTimeout(() => {
                   onStartScreensaver()
