@@ -4,9 +4,14 @@ import { useSettingsStore } from '../stores/settingsStore'
 import { useAppStore } from '../stores/appStore'
 import { useAllPhotos } from '../hooks/usePhotoSources'
 import PhotoSourceConfig from './PhotoSourceConfig'
-import SlideshowSettings from './SlideshowSettings'
-import DisplaySettings from './DisplaySettings'
-import NetworkSettings from './NetworkSettings'
+import PhotoIntervalSettings from './PhotoIntervalSettings'
+import TransitionEffectSettings from './TransitionEffectSettings'
+import MediaOrderSettings from './MediaOrderSettings'
+import ImageQualitySettings from './ImageQualitySettings'
+import DisplayOptionsSettings from './DisplayOptionsSettings'
+import LayoutSettings from './LayoutSettings'
+import PhotoRefreshSettings from './PhotoRefreshSettings'
+import CacheSettings from './CacheSettings'
 import VideoSettings from './VideoSettings'
 import AlbumSelectionView from './AlbumSelectionView'
 import type { PhotoSource, ImmichConfig } from '../types'
@@ -20,7 +25,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   const { photos } = useAppStore()
   const queryClient = useQueryClient()
   const allPhotosQuery = useAllPhotos()
-  const [activeTab, setActiveTab] = useState<'sources' | 'slideshow' | 'video' | 'display' | 'network'>('sources')
+  const [activeTab, setActiveTab] = useState<'sources' | 'photo-interval' | 'transition-effect' | 'media-order' | 'image-quality' | 'display-options' | 'layout' | 'video' | 'photo-refresh' | 'cache'>('sources')
   const [albumSelectionView, setAlbumSelectionView] = useState<{
     photoSource: PhotoSource
     selectedAlbumIds: string[]
@@ -167,14 +172,64 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                 Photo Sources
               </button>
               <button
-                onClick={() => setActiveTab('slideshow')}
+                onClick={() => setActiveTab('photo-interval')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
-                  activeTab === 'slideshow'
+                  activeTab === 'photo-interval'
                     ? 'bg-blue-900 text-blue-200'
                     : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
-                Slideshow Settings
+                Photo Interval
+              </button>
+              <button
+                onClick={() => setActiveTab('transition-effect')}
+                className={`w-full text-left px-4 py-2 rounded-lg ${
+                  activeTab === 'transition-effect'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
+                }`}
+              >
+                Transition Effect
+              </button>
+              <button
+                onClick={() => setActiveTab('media-order')}
+                className={`w-full text-left px-4 py-2 rounded-lg ${
+                  activeTab === 'media-order'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
+                }`}
+              >
+                Media Order
+              </button>
+              <button
+                onClick={() => setActiveTab('image-quality')}
+                className={`w-full text-left px-4 py-2 rounded-lg ${
+                  activeTab === 'image-quality'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
+                }`}
+              >
+                Image Quality
+              </button>
+              <button
+                onClick={() => setActiveTab('display-options')}
+                className={`w-full text-left px-4 py-2 rounded-lg ${
+                  activeTab === 'display-options'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
+                }`}
+              >
+                Display Options
+              </button>
+              <button
+                onClick={() => setActiveTab('layout')}
+                className={`w-full text-left px-4 py-2 rounded-lg ${
+                  activeTab === 'layout'
+                    ? 'bg-blue-900 text-blue-200'
+                    : 'text-dark-muted hover:bg-gray-700'
+                }`}
+              >
+                Portrait Photos
               </button>
               <button
                 onClick={() => setActiveTab('video')}
@@ -184,27 +239,27 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                     : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
-                Video Settings
+                Video
               </button>
               <button
-                onClick={() => setActiveTab('display')}
+                onClick={() => setActiveTab('photo-refresh')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
-                  activeTab === 'display'
+                  activeTab === 'photo-refresh'
                     ? 'bg-blue-900 text-blue-200'
                     : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
-                Display Settings
+                Photo Refresh
               </button>
               <button
-                onClick={() => setActiveTab('network')}
+                onClick={() => setActiveTab('cache')}
                 className={`w-full text-left px-4 py-2 rounded-lg ${
-                  activeTab === 'network'
+                  activeTab === 'cache'
                     ? 'bg-blue-900 text-blue-200'
                     : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
-                Network Settings
+                Cache
               </button>
             </div>
           </div>
@@ -213,10 +268,15 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
         <main className="flex-1 overflow-y-auto bg-dark-bg">
           <div className="p-6">
             {activeTab === 'sources' && <PhotoSourceConfig onOpenAlbumSelection={handleOpenAlbumSelection} />}
-            {activeTab === 'slideshow' && <SlideshowSettings />}
+            {activeTab === 'photo-interval' && <PhotoIntervalSettings />}
+            {activeTab === 'transition-effect' && <TransitionEffectSettings />}
+            {activeTab === 'media-order' && <MediaOrderSettings />}
+            {activeTab === 'image-quality' && <ImageQualitySettings />}
+            {activeTab === 'display-options' && <DisplayOptionsSettings />}
+            {activeTab === 'layout' && <LayoutSettings />}
             {activeTab === 'video' && <VideoSettings />}
-            {activeTab === 'display' && <DisplaySettings />}
-            {activeTab === 'network' && <NetworkSettings />}
+            {activeTab === 'photo-refresh' && <PhotoRefreshSettings />}
+            {activeTab === 'cache' && <CacheSettings />}
           </div>
         </main>
       </div>
