@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useTestConnection } from '../hooks/usePhotoSources'
 import { Button, Input, Card, ToggleButton, EnabledToggle } from './ui'
+import ConnectionTestModal from './ConnectionTestModal'
 import type { PhotoSource, ImmichConfig } from '../types'
 
 interface PhotoSourceEditProps {
@@ -29,13 +30,16 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
         username: '',
         password: '',
         albumIds: [],
-      } as ImmichConfig,
+        authType: 'apiKey', // Track auth type in config
+      } as ImmichConfig & { authType: 'apiKey' | 'password' },
       enabled: false,
     }
   })
 
   const [authType, setAuthType] = useState<'apiKey' | 'password'>(() => {
-    const config = formData.config as ImmichConfig
+    const config = formData.config as ImmichConfig & { authType?: 'apiKey' | 'password' }
+    // Use stored authType if available, otherwise infer from existing data
+    if (config.authType) return config.authType
     if (config.apiKey) return 'apiKey'
     if (config.username && config.password) return 'password'
     return 'apiKey'
@@ -43,6 +47,7 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
   
   const testConnection = useTestConnection(formData.id)
   const config = formData.config as ImmichConfig
+  const [showTestModal, setShowTestModal] = useState(false)
 
   const updateConfig = (updates: Partial<ImmichConfig>) => {
     const newConfig = { ...config, ...updates }
@@ -51,27 +56,30 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
 
   const handleAuthTypeChange = (newAuthType: 'apiKey' | 'password') => {
     setAuthType(newAuthType)
-    
-    // Clear fields from the other auth method
-    if (newAuthType === 'apiKey') {
-      updateConfig({ username: '', password: '' })
-    } else {
-      updateConfig({ apiKey: '' })
-    }
+    // Update the authType in the config to track this as a change
+    updateConfig({ authType: newAuthType } as Partial<ImmichConfig>)
   }
 
   const hasChanges = () => {
     if (isNewSource) {
       // For new sources, check if any meaningful data has been entered
-      const config = formData.config as ImmichConfig
+      const config = formData.config as ImmichConfig & { authType?: string }
       return formData.name !== 'My Immich Server' || 
              config.serverUrl !== '' || 
              config.apiKey !== '' || 
              config.username !== '' || 
-             config.password !== ''
+             config.password !== '' ||
+             authType !== 'apiKey' // Default auth type changed
     } else {
-      // For existing sources, compare with original
-      return JSON.stringify(formData) !== JSON.stringify(source)
+      // For existing sources, compare with original (including authType changes)
+      const originalConfig = source.config as ImmichConfig & { authType?: string }
+      const currentConfig = formData.config as ImmichConfig & { authType?: string }
+      
+      // Check if authType changed from what was originally stored
+      const originalAuthType = originalConfig.authType || (originalConfig.apiKey ? 'apiKey' : 'password')
+      const authTypeChanged = authType !== originalAuthType
+      
+      return JSON.stringify(formData) !== JSON.stringify(source) || authTypeChanged
     }
   }
 
@@ -281,12 +289,12 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
                   variant="primary"
                   size="lg"
                   fullWidth
-                  onClick={() => testConnection.refetch()}
-                  disabled={testConnection.isLoading || !config.serverUrl || 
+                  onClick={() => setShowTestModal(true)}
+                  disabled={!config.serverUrl || 
                     (authType === 'apiKey' && !config.apiKey) ||
                     (authType === 'password' && (!config.username || !config.password))}
                 >
-                  {testConnection.isLoading ? 'Testing...' : 'Test Connection'}
+                  Test Connection
                 </Button>
                 
                 {connectionStatus && (
@@ -306,6 +314,12 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
           </div>
         </div>
       </main>
+
+      <ConnectionTestModal
+        isOpen={showTestModal}
+        onClose={() => setShowTestModal(false)}
+        photoSource={formData}
+      />
     </div>
   )
 }
