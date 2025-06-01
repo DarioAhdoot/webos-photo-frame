@@ -21,9 +21,10 @@ import type { PhotoSource, ImmichConfig } from '../types'
 interface SettingsViewProps {
   onStartSlideshow: () => void
   initialEditingSource?: PhotoSource | null | undefined
+  onRootStateChange?: (isRoot: boolean) => void
 }
 
-export default function SettingsView({ onStartSlideshow, initialEditingSource }: SettingsViewProps) {
+export default function SettingsView({ onStartSlideshow, initialEditingSource, onRootStateChange }: SettingsViewProps) {
   const { photoSources, updatePhotoSource } = useSettingsStore()
   const { photos } = useAppStore()
   const queryClient = useQueryClient()
@@ -41,6 +42,34 @@ export default function SettingsView({ onStartSlideshow, initialEditingSource }:
       setEditingSource(initialEditingSource)
     }
   }, [initialEditingSource])
+
+  // Track root state and notify parent
+  useEffect(() => {
+    const isAtRoot = editingSource === undefined && albumSelectionView === null
+    onRootStateChange?.(isAtRoot)
+  }, [editingSource, albumSelectionView, onRootStateChange])
+
+  // Handle WebOS back button within settings
+  useEffect(() => {
+    const handleBackButton = (event: KeyboardEvent) => {
+      // WebOS back button keycode is 461 (0x1CD)
+      if (event.keyCode === 461) {
+        if (albumSelectionView) {
+          // In album selection, go back to edit view
+          event.preventDefault()
+          handleBackFromAlbumSelection()
+        } else if (editingSource !== undefined) {
+          // In edit view, go back to main settings
+          event.preventDefault()
+          handleBackFromEdit()
+        }
+        // If at root, let App.tsx handle the back button
+      }
+    }
+
+    document.addEventListener('keydown', handleBackButton)
+    return () => document.removeEventListener('keydown', handleBackButton)
+  }, [editingSource, albumSelectionView])
 
 
   const hasConfiguredSources = photoSources.some(source => source.enabled)

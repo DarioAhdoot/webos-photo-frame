@@ -41,7 +41,8 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
 
   // Handle keyboard events
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Escape' || event.key === ' ') {
+    // WebOS back button keycode is 461 (0x1CD)
+    if (event.keyCode === 461 || event.key === 'Escape' || event.key === ' ') {
       onExit()
     } else if (event.key === 'ArrowRight') {
       handleNextPhoto()

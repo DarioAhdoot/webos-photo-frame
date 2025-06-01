@@ -4,16 +4,55 @@ import SlideshowView from './components/SlideshowView'
 import WelcomeScreen from './components/WelcomeScreen'
 import { useAppStore } from './stores/appStore'
 import { useSettingsStore } from './stores/settingsStore'
+import ExitConfirmModal from './components/ExitConfirmModal'
 
 function App() {
   const { currentMode, userRequestedSettings, setCurrentMode } = useAppStore()
   const { photoSources } = useSettingsStore()
   const [shouldStartWithAddSource, setShouldStartWithAddSource] = useState(false)
+  const [showExitConfirm, setShowExitConfirm] = useState(false)
+  const [isAtSettingsRoot, setIsAtSettingsRoot] = useState(true)
   
   // Enable dark mode
   useEffect(() => {
     document.documentElement.classList.add('dark')
   }, [])
+
+  // Handle WebOS back button
+  useEffect(() => {
+    const handleBackButton = (event: KeyboardEvent) => {
+      // WebOS back button keycode is 461 (0x1CD)
+      if (event.keyCode === 461) {
+        event.preventDefault()
+        
+        if (currentMode === 'slideshow') {
+          // From slideshow, go back to settings
+          setCurrentMode('settings', true)
+        } else if (currentMode === 'settings' && isAtSettingsRoot) {
+          // From settings root, show exit confirmation
+          setShowExitConfirm(true)
+        }
+        // If in settings but not at root, let the settings view handle it
+      }
+    }
+
+    document.addEventListener('keydown', handleBackButton)
+    return () => document.removeEventListener('keydown', handleBackButton)
+  }, [currentMode, isAtSettingsRoot, setCurrentMode])
+
+  const handleExitApp = () => {
+    // Use WebOS platform back function to properly exit
+    if (typeof window !== 'undefined' && (window as any).webOS) {
+      (window as any).webOS.platformBack()
+    } else {
+      // Fallback for browser testing
+      window.close()
+    }
+  }
+
+  const handleCancelExit = () => {
+    setShowExitConfirm(false)
+  }
   
   // Auto-launch into slideshow if photo sources exist (unless user explicitly requested settings)
   useEffect(() => {
@@ -33,6 +72,10 @@ function App() {
     setCurrentMode('settings', true) // User explicitly requested settings
   }
 
+  const handleSettingsRootChange = (isRoot: boolean) => {
+    setIsAtSettingsRoot(isRoot)
+  }
+
   const handleSetupPhotoSources = () => {
     setShouldStartWithAddSource(true)
     setCurrentMode('settings', true) // User explicitly requested settings to set up sources
@@ -49,9 +92,17 @@ function App() {
         <SettingsView 
           onStartSlideshow={handleStartSlideshow} 
           initialEditingSource={shouldStartWithAddSource ? null : undefined}
+          onRootStateChange={handleSettingsRootChange}
         />
       ) : (
         <SlideshowView onExit={handleExitSlideshow} />
+      )}
+      
+      {showExitConfirm && (
+        <ExitConfirmModal
+          onConfirm={handleExitApp}
+          onCancel={handleCancelExit}
+        />
       )}
     </div>
   )
