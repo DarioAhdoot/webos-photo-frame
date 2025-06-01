@@ -181,10 +181,11 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
         slideshowInterval={settings.slideshow.interval}
       />
       
-      {settings.display.showMetadata && (
+      {(settings.display.showMetadata || settings.display.showTime) && (
         <MetadataOverlay 
           photo={currentPhoto}
           showWeather={settings.display.showWeather}
+          showTime={settings.display.showTime}
         />
       )}
       

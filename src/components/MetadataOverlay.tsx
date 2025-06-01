@@ -1,14 +1,17 @@
 import { useWeather } from '../hooks/useWeather'
+import { useCurrentTime } from '../hooks/useCurrentTime'
 import { WeatherService } from '../services/WeatherService'
 import type { Photo } from '../types'
 
 interface MetadataOverlayProps {
   photo: Photo
   showWeather: boolean
+  showTime: boolean
 }
 
-export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayProps) {
+export default function MetadataOverlay({ photo, showWeather, showTime }: MetadataOverlayProps) {
   const { weather, isLoading: weatherLoading, error: weatherError } = useWeather(showWeather)
+  const currentTime = useCurrentTime(showTime)
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return null
@@ -26,35 +29,19 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
 
   return (
     <div className="metadata-overlay">
-      <div className="space-y-3">
-        {/* Photo Information */}
-        <div className="photo-info">
-          {photo.metadata?.description && (
-            <p className="text-sm opacity-90 mb-2">{photo.metadata.description}</p>
-          )}
-          
-          <div className="text-xs opacity-75 space-y-1">
-            {photo.metadata?.dateTaken && (
-              <div>📅 {formatDate(photo.metadata.dateTaken)}</div>
-            )}
-            
-            {photo.metadata?.location && (
-              <div>📍 {photo.metadata.location}</div>
-            )}
-            
-            {photo.metadata?.camera && (
-              <div>📷 {photo.metadata.camera}</div>
-            )}
-            
-            {photo.metadata?.dimensions && (
-              <div>
-                📐 {photo.metadata.dimensions.width} × {photo.metadata.dimensions.height}
-              </div>
-            )}
+      <div className="space-y-4">
+        {/* Current Time Information - Top Priority */}
+        {showTime && (
+          <div className="time-info">
+            <div className="space-y-1">
+              <div className="text-4xl font-bold">{currentTime.time}</div>
+              <div className="text-base opacity-75">{currentTime.date}</div>
+              <div className="text-xs opacity-60">🌍 {currentTime.timezone}</div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Weather Information */}
+        {/* Weather Information - Second Priority */}
         {showWeather && (
           <div className="weather-info">
             {weatherLoading && (
@@ -88,6 +75,33 @@ export default function MetadataOverlay({ photo, showWeather }: MetadataOverlayP
             )}
           </div>
         )}
+
+        {/* Photo Information - Third Priority */}
+        <div className="photo-info">
+          {photo.metadata?.description && (
+            <p className="text-sm opacity-90 mb-2">{photo.metadata.description}</p>
+          )}
+          
+          <div className="text-xs opacity-75 space-y-1">
+            {photo.metadata?.dateTaken && (
+              <div>📅 {formatDate(photo.metadata.dateTaken)}</div>
+            )}
+            
+            {photo.metadata?.location && (
+              <div>📍 {photo.metadata.location}</div>
+            )}
+            
+            {photo.metadata?.camera && (
+              <div>📷 {photo.metadata.camera}</div>
+            )}
+            
+            {photo.metadata?.dimensions && (
+              <div>
+                📐 {photo.metadata.dimensions.width} × {photo.metadata.dimensions.height}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

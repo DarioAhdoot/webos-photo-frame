@@ -46,6 +46,20 @@ export default function DisplayOptionsSettings() {
                   Show weather information
                 </span>
               </button>
+
+              <button
+                onClick={() => handleDisplayChange('showTime', !settings.display.showTime)}
+                className={`w-full px-8 py-6 rounded-xl text-xl font-medium text-center transition-colors border-2 ${
+                  settings.display.showTime
+                    ? 'bg-blue-600 text-white border-blue-500'
+                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-transparent'
+                }`}
+              >
+                <span className="flex items-center justify-center">
+                  <span className={`mr-4 text-2xl ${settings.display.showTime ? '✓' : '○'}`}></span>
+                  Show current time
+                </span>
+              </button>
             </div>
             
             <div className="text-lg text-dark-muted">

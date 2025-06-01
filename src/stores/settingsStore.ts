@@ -26,6 +26,7 @@ const defaultSettings: AppSettings = {
   display: {
     showMetadata: false,
     showWeather: false,
+    showTime: true,
     imageResolution: 'optimized',
   },
   network: {

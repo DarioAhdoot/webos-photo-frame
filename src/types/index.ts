@@ -59,6 +59,7 @@ export interface LayoutSettings {
 export interface DisplaySettings {
   showMetadata: boolean
   showWeather: boolean
+  showTime: boolean
   imageResolution: 'original' | 'optimized'
 }
 
