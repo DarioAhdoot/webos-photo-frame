@@ -19,6 +19,24 @@
   * {
     box-sizing: border-box;
   }
+
+  /* Magic Remote focus styles for WebOS TV */
+  *:focus {
+    outline: 2px solid rgba(59, 130, 246, 0.8);
+    outline-offset: 2px;
+  }
+
+  /* Hide cursor by default in slideshow mode */
+  .slideshow-container {
+    cursor: none;
+  }
+
+  /* Button focus styles for Magic Remote 5-way navigation */
+  button:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.8);
+    outline-offset: 2px;
+    background-color: rgba(59, 130, 246, 0.2);
+  }
 }
 
 @layer components {

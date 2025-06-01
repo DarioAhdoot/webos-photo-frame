@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface FloatingSettingsButtonProps {
   onOpenSettings: () => void
@@ -6,7 +6,9 @@ interface FloatingSettingsButtonProps {
 
 export default function FloatingSettingsButton({ onOpenSettings }: FloatingSettingsButtonProps) {
   const [isVisible, setIsVisible] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const handleMouseMove = () => {
@@ -17,25 +19,53 @@ export default function FloatingSettingsButton({ onOpenSettings }: FloatingSetti
         clearTimeout(timeoutId)
       }
       
-      // Set new timeout to hide after 5 seconds
+      // Set new timeout to hide after 5 seconds (unless focused)
       const newTimeoutId = setTimeout(() => {
-        setIsVisible(false)
+        if (!isFocused) {
+          setIsVisible(false)
+        }
       }, 5000)
       
       setTimeoutId(newTimeoutId)
     }
 
-    // Add mouse move listener to document
+    // Handle Magic Remote cursor state changes
+    const handleCursorStateChange = (event: any) => {
+      const isPointerMode = event.detail?.visibility === true
+      if (isPointerMode) {
+        // In pointer mode, show button on cursor movement
+        setIsVisible(true)
+      }
+    }
+
+    // Handle keyboard navigation (5-way mode)
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Show button when using arrow keys (indicates 5-way navigation)
+      if ([37, 38, 39, 40].includes(event.keyCode)) {
+        setIsVisible(true)
+        
+        // Auto-focus button if it's visible and we're navigating
+        if (buttonRef.current && isVisible) {
+          buttonRef.current.focus()
+        }
+      }
+    }
+
+    // Add event listeners
     document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('cursorStateChange', handleCursorStateChange)
+    document.addEventListener('keydown', handleKeyDown)
     
     // Cleanup
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('cursorStateChange', handleCursorStateChange)
+      document.removeEventListener('keydown', handleKeyDown)
       if (timeoutId) {
         clearTimeout(timeoutId)
       }
     }
-  }, [timeoutId])
+  }, [timeoutId, isFocused, isVisible])
 
   return (
     <div
@@ -44,8 +74,11 @@ export default function FloatingSettingsButton({ onOpenSettings }: FloatingSetti
       }`}
     >
       <button
+        ref={buttonRef}
         onClick={onOpenSettings}
-        className="bg-black/20 hover:bg-black/40 text-white p-3 rounded-full backdrop-blur-sm transition-colors duration-200"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        className="bg-black/20 hover:bg-black/40 focus:bg-black/60 focus:ring-2 focus:ring-white/50 text-white p-3 rounded-full backdrop-blur-sm transition-colors duration-200"
         aria-label="Open Settings"
       >
         <svg

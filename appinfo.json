@@ -14,5 +14,6 @@
   "disableBackHistoryAPI": true,
   "requiredPermissions": [
     "network.access"
-  ]
+  ],
+  "handlesRelaunch": false
 }

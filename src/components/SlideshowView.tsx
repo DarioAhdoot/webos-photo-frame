@@ -8,13 +8,14 @@ import PhotoDisplay from './PhotoDisplay'
 import MetadataOverlay from './MetadataOverlay'
 import FloatingSettingsButton from './FloatingSettingsButton'
 import OfflineIndicator from './OfflineIndicator'
+import MagicRemoteHandler from './MagicRemoteHandler'
 
 interface SlideshowViewProps {
   onExit: () => void
 }
 
 export default function SlideshowView({ onExit }: SlideshowViewProps) {
-  const { photos, currentPhotoIndex, nextPhoto } = useAppStore()
+  const { photos, currentPhotoIndex, nextPhoto, previousPhoto, isPaused } = useAppStore()
   const { settings, photoSources } = useSettingsStore()
   const { isLoading, error } = useAllPhotos()
   const [clickToExitEnabled, setClickToExitEnabled] = useState(false)
@@ -23,6 +24,10 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
   const handleNextPhoto = useCallback(() => {
     nextPhoto() // Automatically restarts when reaching the end
   }, [nextPhoto])
+
+  const handlePreviousPhoto = useCallback(() => {
+    previousPhoto()
+  }, [previousPhoto])
   
   // Use cached photo loader for offline support
   const { getCachedPhotoUrl, isOffline } = useCachedPhotoLoader(
@@ -44,15 +49,23 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
     return () => clearTimeout(timer)
   }, [])
 
-  // Handle keyboard events
+  // Handle keyboard events (for browser testing - Magic Remote handler takes precedence on WebOS)
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    // Only handle these events if not handled by Magic Remote
+    if (event.defaultPrevented) return
+    
     // WebOS back button keycode is 461 (0x1CD)
-    if (event.keyCode === 461 || event.key === 'Escape' || event.key === ' ') {
+    if (event.keyCode === 461 || event.key === 'Escape') {
+      event.preventDefault()
       onExit()
     } else if (event.key === 'ArrowRight') {
+      event.preventDefault()
       handleNextPhoto()
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      handlePreviousPhoto()
     }
-  }, [onExit, handleNextPhoto])
+  }, [onExit, handleNextPhoto, handlePreviousPhoto])
 
   // Handle mouse/touch events (with delay to prevent accidental exits)
   const handleClick = useCallback((event: MouseEvent) => {
@@ -70,7 +83,7 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
 
   // Auto-advance slideshow
   useEffect(() => {
-    if (photos.length === 0) return
+    if (photos.length === 0 || isPaused) return
 
     const currentPhoto = photos[currentPhotoIndex]
     if (!currentPhoto) return
@@ -96,7 +109,7 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
     }, duration)
 
     return () => clearInterval(interval)
-  }, [photos.length, settings.slideshow.interval, settings.slideshow.videoPlayback, handleNextPhoto, currentPhotoIndex])
+  }, [photos.length, settings.slideshow.interval, settings.slideshow.videoPlayback, handleNextPhoto, currentPhotoIndex, isPaused])
 
   // Setup event listeners
   useEffect(() => {
@@ -176,6 +189,13 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
 
   return (
     <div className="slideshow-container">
+      <MagicRemoteHandler
+        onNextPhoto={handleNextPhoto}
+        onPreviousPhoto={handlePreviousPhoto}
+        onToggleSettings={onExit}
+        isInSlideshow={true}
+      />
+      
       <PhotoDisplay 
         photo={currentPhoto} 
         transition={settings.slideshow.transition}
@@ -184,6 +204,7 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
         videoPlayback={settings.slideshow.videoPlayback}
         videoMuted={settings.slideshow.videoMuted}
         slideshowInterval={settings.slideshow.interval}
+        isPaused={isPaused}
       />
       
       {(settings.display.showMetadata || settings.display.showTime) && (

@@ -4,12 +4,16 @@ import type { AppState, Photo } from '../types'
 
 interface AppStore extends AppState {
   userRequestedSettings: boolean
+  isAppVisible: boolean
+  isPaused: boolean
   setCurrentMode: (mode: 'settings' | 'slideshow', userRequested?: boolean) => void
   setCurrentPhotoIndex: (index: number) => void
   setPhotos: (photos: Photo[]) => void
   setLoading: (loading: boolean) => void
   nextPhoto: () => void
   previousPhoto: () => void
+  setAppVisible: (visible: boolean) => void
+  setPaused: (paused: boolean) => void
 }
 
 export const useAppStore = create<AppStore>()(
@@ -20,6 +24,8 @@ export const useAppStore = create<AppStore>()(
       photos: [],
       isLoading: false,
       userRequestedSettings: false,
+      isAppVisible: true,
+      isPaused: false,
 
       setCurrentMode: (mode, userRequested = false) => {
         set({ 
@@ -45,6 +51,18 @@ export const useAppStore = create<AppStore>()(
           set({ currentPhotoIndex: newIndex })
         }
       },
+
+      setAppVisible: (visible) => {
+        set({ isAppVisible: visible })
+        // Auto pause/resume when app visibility changes
+        if (!visible) {
+          set({ isPaused: true })
+        } else {
+          set({ isPaused: false })
+        }
+      },
+
+      setPaused: (paused) => set({ isPaused: paused }),
     }),
     {
       name: 'immich-slideshow-app',

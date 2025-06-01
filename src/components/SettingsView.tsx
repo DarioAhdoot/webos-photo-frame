@@ -16,6 +16,7 @@ import PhotoRefreshSettings from './PhotoRefreshSettings'
 import CacheSettings from './CacheSettings'
 import VideoSettings from './VideoSettings'
 import AlbumSelectionView from './AlbumSelectionView'
+import MagicRemoteHandler from './MagicRemoteHandler'
 import type { PhotoSource, ImmichConfig } from '../types'
 
 interface SettingsViewProps {
@@ -175,6 +176,9 @@ export default function SettingsView({ onStartSlideshow, initialEditingSource, o
 
   return (
     <div className="h-screen bg-dark-bg flex flex-col">
+      <MagicRemoteHandler
+        isInSlideshow={false}
+      />
       <header className="bg-dark-card shadow-sm border-b border-dark-border p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-dark-text">Photo Slideshow Settings</h1>

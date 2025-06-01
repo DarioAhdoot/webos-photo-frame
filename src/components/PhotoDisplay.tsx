@@ -11,9 +11,10 @@ interface PhotoDisplayProps {
   videoPlayback?: 'full' | 'duration'
   videoMuted?: boolean
   slideshowInterval?: number
+  isPaused?: boolean
 }
 
-export default function PhotoDisplay({ photo, transition, getCachedPhotoUrl, onVideoEnd, videoPlayback, videoMuted = true, slideshowInterval = 10 }: PhotoDisplayProps) {
+export default function PhotoDisplay({ photo, transition, getCachedPhotoUrl, onVideoEnd, videoPlayback, videoMuted = true, slideshowInterval = 10, isPaused = false }: PhotoDisplayProps) {
   const { settings } = useSettingsStore()
   const [currentImageSrc, setCurrentImageSrc] = useState<string>('')
   const [previousImageSrc, setPreviousImageSrc] = useState<string>('')
@@ -154,6 +155,29 @@ export default function PhotoDisplay({ photo, transition, getCachedPhotoUrl, onV
     }
   }, [photo.id, photo.url, photo.source, transition, getCachedPhotoUrl, currentPhotoId])
 
+  // Handle video pause/resume when app visibility changes
+  useEffect(() => {
+    if (photo.type === 'VIDEO') {
+      if (isPaused) {
+        // Pause video
+        if (videoRef.current && !videoRef.current.paused) {
+          videoRef.current.pause()
+        }
+        if (previousVideoRef.current && !previousVideoRef.current.paused) {
+          previousVideoRef.current.pause()
+        }
+      } else {
+        // Resume video if it was previously playing
+        if (videoRef.current && videoRef.current.paused && currentImageLoaded) {
+          videoRef.current.play().catch(e => console.warn('Video resume failed:', e))
+        }
+        if (previousVideoRef.current && previousVideoRef.current.paused) {
+          previousVideoRef.current.play().catch(e => console.warn('Previous video resume failed:', e))
+        }
+      }
+    }
+  }, [isPaused, photo.type, currentImageLoaded])
+
   const handleCurrentImageLoad = () => {
     
     // Only update loaded state if not already loaded (for non-preloaded images)
@@ -167,8 +191,8 @@ export default function PhotoDisplay({ photo, transition, getCachedPhotoUrl, onV
     if (!currentImageLoaded) {
       setCurrentImageLoaded(true)
       startTransitionIfNeeded()
-      // Auto-play video
-      if (videoRef.current) {
+      // Auto-play video only if not paused
+      if (videoRef.current && !isPaused) {
         videoRef.current.play().catch(e => console.warn('Video autoplay failed:', e))
         
         // Set up duration limit if needed
