@@ -118,18 +118,7 @@ export default function SettingsView({ onStartSlideshow, initialEditingSource }:
     })
   }
 
-  // If edit view is active, show it instead of main settings
-  if (editingSource !== undefined) {
-    return (
-      <PhotoSourceEdit
-        source={editingSource}
-        onBack={handleBackFromEdit}
-        onOpenAlbumSelection={handleOpenAlbumSelection}
-      />
-    )
-  }
-
-  // If album selection view is active, show it instead of main settings
+  // If album selection view is active, show it instead of main settings or edit view
   if (albumSelectionView) {
     return (
       <AlbumSelectionView
@@ -139,6 +128,17 @@ export default function SettingsView({ onStartSlideshow, initialEditingSource }:
         onAlbumBulkSelect={handleAlbumBulkSelect}
         onBack={handleBackFromAlbumSelection}
         onSave={handleSaveAlbumSelection}
+      />
+    )
+  }
+
+  // If edit view is active, show it instead of main settings
+  if (editingSource !== undefined) {
+    return (
+      <PhotoSourceEdit
+        source={editingSource}
+        onBack={handleBackFromEdit}
+        onOpenAlbumSelection={handleOpenAlbumSelection}
       />
     )
   }

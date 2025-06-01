@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ImmichPhotoSource } from '../services/ImmichPhotoSource'
-import { Button, LoadingState, ErrorState, EmptyState, Checkbox } from './ui'
+import { Button, LoadingState, ErrorState, EmptyState, Checkbox, ConfirmModal } from './ui'
 import type { PhotoSource } from '../types'
 import type { Album } from '../services/PhotoSourceBase'
 
@@ -25,6 +25,8 @@ export default function AlbumSelectionView({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [thumbnailBlobUrls, setThumbnailBlobUrls] = useState<Record<string, string>>({})
+  const [initialSelectedAlbumIds] = useState<string[]>(selectedAlbumIds)
+  const [showBackConfirm, setShowBackConfirm] = useState(false)
 
   useEffect(() => {
     loadAlbums()
@@ -38,6 +40,28 @@ export default function AlbumSelectionView({
       })
     }
   }, [thumbnailBlobUrls])
+
+  // Handle TV remote back button
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Handle TV remote back button (mapped to Escape key in WebOS)
+      if (event.key === 'Escape' || event.key === 'Back') {
+        event.preventDefault()
+        handleBack()
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, []) // Empty dependency array since handleBack will handle the latest state
+
+  const hasChanges = () => {
+    // Compare current selection with initial selection
+    if (selectedAlbumIds.length !== initialSelectedAlbumIds.length) {
+      return true
+    }
+    return !selectedAlbumIds.every(id => initialSelectedAlbumIds.includes(id))
+  }
 
   const loadAlbums = async () => {
     try {
@@ -116,16 +140,35 @@ export default function AlbumSelectionView({
     }
   }
 
+  const handleBack = () => {
+    if (hasChanges()) {
+      setShowBackConfirm(true)
+    } else {
+      onBack()
+    }
+  }
+
+  const confirmBack = () => {
+    setShowBackConfirm(false)
+    onBack()
+  }
+
   if (loading) {
     return (
       <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
         <div className="flex-shrink-0 bg-dark-card shadow-sm border-b border-dark-border p-8">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
-              <Button variant="ghost" size="lg" onClick={onBack}>
-                ← Back
-              </Button>
+              <div className="flex items-center gap-6">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={handleBack}
+                >
+                  ← Back
+                </Button>
+                <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
+              </div>
             </div>
           </div>
         </div>
@@ -148,10 +191,16 @@ export default function AlbumSelectionView({
         <div className="flex-shrink-0 bg-dark-card shadow-sm border-b border-dark-border p-8">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
-              <Button variant="ghost" size="lg" onClick={onBack}>
-                ← Back
-              </Button>
+              <div className="flex items-center gap-6">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={handleBack}
+                >
+                  ← Back
+                </Button>
+                <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
+              </div>
             </div>
           </div>
         </div>
@@ -173,41 +222,47 @@ export default function AlbumSelectionView({
     <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
       <div className="flex-shrink-0 bg-dark-card shadow-sm border-b border-dark-border p-8">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
-              <p className="text-xl text-dark-muted mt-2">
-                Choose albums from {photoSource.name} • {selectedAlbumIds.length} selected
-              </p>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={handleBack}
+                >
+                  ← Back
+                </Button>
+                <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
+              </div>
+              <div className="flex gap-4">
+                {albums.length > 0 && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      onClick={handleSelectAll}
+                      disabled={selectedAlbumIds.length === albums.length}
+                    >
+                      Select All
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      onClick={handleDeselectAll}
+                      disabled={selectedAlbumIds.length === 0}
+                    >
+                      Deselect All
+                    </Button>
+                  </>
+                )}
+                <Button variant="primary" size="lg" onClick={onSave}>
+                  Save Selection
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-4">
-              {albums.length > 0 && (
-                <>
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    onClick={handleSelectAll}
-                    disabled={selectedAlbumIds.length === albums.length}
-                  >
-                    Select All
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    onClick={handleDeselectAll}
-                    disabled={selectedAlbumIds.length === 0}
-                  >
-                    Deselect All
-                  </Button>
-                </>
-              )}
-              <Button variant="ghost" size="lg" onClick={onBack}>
-                ← Back
-              </Button>
-              <Button variant="primary" size="lg" onClick={onSave}>
-                Save Selection
-              </Button>
-            </div>
+            <p className="text-xl text-dark-muted">
+              Choose albums from {photoSource.name} • {selectedAlbumIds.length} selected
+            </p>
           </div>
         </div>
       </div>
@@ -269,6 +324,17 @@ export default function AlbumSelectionView({
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showBackConfirm}
+        onClose={() => setShowBackConfirm(false)}
+        onConfirm={confirmBack}
+        title="Unsaved Changes"
+        message="You have unsaved album selections. Are you sure you want to go back without saving?"
+        confirmText="Discard Changes"
+        cancelText="Keep Editing"
+        variant="warning"
+      />
     </div>
   )
 }
