@@ -10,7 +10,7 @@ export default function WelcomeScreen({ onSetupPhotoSources }: WelcomeScreenProp
     >
       <div className="text-center px-8">
         <h1 className="text-4xl font-bold text-dark-text mb-6">
-          Welcome to Photo Screensaver
+          Welcome to Photo Slideshow
         </h1>
         <p className="text-xl text-dark-muted mb-8 max-w-2xl">
           To get started, you'll need to set up photo sources from your Immich server.

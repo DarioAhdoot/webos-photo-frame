@@ -4,7 +4,7 @@ import type { AppState, Photo } from '../types'
 
 interface AppStore extends AppState {
   userRequestedSettings: boolean
-  setCurrentMode: (mode: 'settings' | 'screensaver', userRequested?: boolean) => void
+  setCurrentMode: (mode: 'settings' | 'slideshow', userRequested?: boolean) => void
   setCurrentPhotoIndex: (index: number) => void
   setPhotos: (photos: Photo[]) => void
   setLoading: (loading: boolean) => void
@@ -47,7 +47,7 @@ export const useAppStore = create<AppStore>()(
       },
     }),
     {
-      name: 'immich-screensaver-app',
+      name: 'immich-slideshow-app',
       partialize: (state) => ({
         currentPhotoIndex: state.currentPhotoIndex,
         photos: state.photos,

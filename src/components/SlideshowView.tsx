@@ -7,11 +7,11 @@ import PhotoDisplay from './PhotoDisplay'
 import MetadataOverlay from './MetadataOverlay'
 import FloatingSettingsButton from './FloatingSettingsButton'
 
-interface ScreensaverViewProps {
+interface SlideshowViewProps {
   onExit: () => void
 }
 
-export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
+export default function SlideshowView({ onExit }: SlideshowViewProps) {
   const { photos, currentPhotoIndex, nextPhoto } = useAppStore()
   const { settings } = useSettingsStore()
   const { isLoading, error } = useAllPhotos()
@@ -106,7 +106,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="screensaver-container">
+      <div className="slideshow-container">
         <div className="flex items-center justify-center h-full">
           <div className="text-white text-center">
             <div className="text-6xl mb-4 animate-pulse">📷</div>
@@ -122,7 +122,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   // Show error state
   if (error) {
     return (
-      <div className="screensaver-container">
+      <div className="slideshow-container">
         <div className="flex items-center justify-center h-full">
           <div className="text-white text-center">
             <div className="text-6xl mb-4">⚠️</div>
@@ -138,7 +138,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   // Show no photos state
   if (photos.length === 0) {
     return (
-      <div className="screensaver-container">
+      <div className="slideshow-container">
         <div className="flex items-center justify-center h-full">
           <div className="text-white text-center">
             <div className="text-6xl mb-4">📷</div>
@@ -156,7 +156,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   
   if (!currentPhoto) {
     return (
-      <div className="screensaver-container">
+      <div className="slideshow-container">
         <div className="flex items-center justify-center h-full">
           <div className="text-white text-center">
             <div className="text-6xl mb-4">📷</div>
@@ -169,7 +169,7 @@ export default function ScreensaverView({ onExit }: ScreensaverViewProps) {
   }
 
   return (
-    <div className="screensaver-container">
+    <div className="slideshow-container">
       <PhotoDisplay 
         photo={currentPhoto} 
         transition={settings.slideshow.transition}

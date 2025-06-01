@@ -22,7 +22,7 @@
 }
 
 @layer components {
-  .screensaver-container {
+  .slideshow-container {
     @apply h-screen w-screen overflow-hidden bg-black relative;
   }
 

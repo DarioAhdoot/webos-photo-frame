@@ -74,7 +74,7 @@ export function usePhotoSources() {
       enabled: enabledSources.length > 0,
       staleTime: refreshInterval * 60 * 60 * 1000, // Use configured refresh interval
       gcTime: 30 * 60 * 1000, // 30 minutes
-      refetchInterval: currentMode === 'screensaver' ? refreshInterval * 60 * 60 * 1000 : false, // Pause auto-refresh in settings
+      refetchInterval: currentMode === 'slideshow' ? refreshInterval * 60 * 60 * 1000 : false, // Pause auto-refresh in settings
     })
   }
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **WebOS TV application** - a photo screensaver that displays photos from Immich servers on LG WebOS smart TVs. The app automatically launches into screensaver mode and allows users to configure photo sources through TV remote navigation.
+This is a **WebOS TV application** - a photo slideshow that displays photos from Immich servers on LG WebOS smart TVs. The app automatically launches into slideshow mode and allows users to configure photo sources through TV remote navigation.
 
 ## Key Principles
 
@@ -42,7 +42,7 @@ npm run lint
 ### WebOS-Specific Application Structure
 
 This is a **dual-mode WebOS application** with two primary views:
-- **Screensaver Mode**: Full-screen photo display optimized for TV viewing
+- **Slideshow Mode**: Full-screen photo display optimized for TV viewing
 - **Settings Mode**: Configuration interface navigable with TV remote
 
 **Key WebOS Considerations:**
@@ -57,7 +57,7 @@ This is a **dual-mode WebOS application** with two primary views:
 - `appStore.ts`: Application mode, photo collection, navigation state
 - `settingsStore.ts`: Photo source configs, slideshow settings, display preferences
 
-**Auto-launch behavior**: App automatically enters screensaver mode when photo sources are configured, falls back to settings when none exist.
+**Auto-launch behavior**: App automatically enters slideshow mode when photo sources are configured, falls back to settings when none exist.
 
 ### Photo Source Architecture
 

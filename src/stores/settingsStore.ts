@@ -121,7 +121,7 @@ export const useSettingsStore = create<SettingsStore>()(
       },
     }),
     {
-      name: 'immich-screensaver-settings',
+      name: 'immich-slideshow-settings',
       onRehydrateStorage: () => (state) => {
         // Ensure settings are properly migrated after rehydration
         if (state?.settings) {

@@ -38,7 +38,7 @@ export class WeatherService {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
-            'User-Agent': 'WebOS-Screensaver/1.0'
+            'User-Agent': 'WebOS-Slideshow/1.0'
           },
         }
       )

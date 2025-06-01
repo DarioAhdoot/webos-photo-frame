@@ -88,7 +88,7 @@ export interface WeatherData {
 }
 
 export interface AppState {
-  currentMode: 'settings' | 'screensaver'
+  currentMode: 'settings' | 'slideshow'
   currentPhotoIndex: number
   photos: Photo[]
   isLoading: boolean

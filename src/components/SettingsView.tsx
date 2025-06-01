@@ -18,11 +18,11 @@ import AlbumSelectionView from './AlbumSelectionView'
 import type { PhotoSource, ImmichConfig } from '../types'
 
 interface SettingsViewProps {
-  onStartScreensaver: () => void
+  onStartSlideshow: () => void
   initialEditingSource?: PhotoSource | null | undefined
 }
 
-export default function SettingsView({ onStartScreensaver, initialEditingSource }: SettingsViewProps) {
+export default function SettingsView({ onStartSlideshow, initialEditingSource }: SettingsViewProps) {
   const { photoSources, updatePhotoSource } = useSettingsStore()
   const { photos } = useAppStore()
   const queryClient = useQueryClient()
@@ -147,7 +147,7 @@ export default function SettingsView({ onStartScreensaver, initialEditingSource 
     <div className="h-screen bg-dark-bg flex flex-col">
       <header className="bg-dark-card shadow-sm border-b border-dark-border p-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-dark-text">Photo Screensaver Settings</h1>
+          <h1 className="text-2xl font-bold text-dark-text">Photo Slideshow Settings</h1>
           <div className="flex gap-3 items-center">
             {/* Debug info */}
             <div className="text-sm text-dark-muted">
@@ -161,7 +161,7 @@ export default function SettingsView({ onStartScreensaver, initialEditingSource 
                 e.stopPropagation()
                 // Small delay to prevent event bubbling issues
                 setTimeout(() => {
-                  onStartScreensaver()
+                  onStartSlideshow()
                 }, 100)
               }}
               disabled={!hasConfiguredSources}
@@ -172,7 +172,7 @@ export default function SettingsView({ onStartScreensaver, initialEditingSource 
               }`}
               title={!hasConfiguredSources ? 'Enable at least one photo source first' : ''}
             >
-              Start Screensaver
+              Start Slideshow
             </button>
           </div>
         </div>

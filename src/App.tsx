@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import SettingsView from './components/SettingsView'
-import ScreensaverView from './components/ScreensaverView'
+import SlideshowView from './components/SlideshowView'
 import WelcomeScreen from './components/WelcomeScreen'
 import { useAppStore } from './stores/appStore'
 import { useSettingsStore } from './stores/settingsStore'
@@ -15,20 +15,20 @@ function App() {
     document.documentElement.classList.add('dark')
   }, [])
   
-  // Auto-launch into screensaver if photo sources exist (unless user explicitly requested settings)
+  // Auto-launch into slideshow if photo sources exist (unless user explicitly requested settings)
   useEffect(() => {
     const enabledPhotoSources = photoSources.filter(source => source.enabled)
     if (enabledPhotoSources.length > 0 && currentMode === 'settings' && !userRequestedSettings) {
-      setCurrentMode('screensaver')
+      setCurrentMode('slideshow')
     }
   }, [photoSources, currentMode, userRequestedSettings, setCurrentMode])
 
-  const handleStartScreensaver = () => {
+  const handleStartSlideshow = () => {
     setShouldStartWithAddSource(false) // Reset add source flag
-    setCurrentMode('screensaver', false) // Reset user requested flag
+    setCurrentMode('slideshow', false) // Reset user requested flag
   }
 
-  const handleExitScreensaver = () => {
+  const handleExitSlideshow = () => {
     setShouldStartWithAddSource(false) // Reset add source flag
     setCurrentMode('settings', true) // User explicitly requested settings
   }
@@ -47,11 +47,11 @@ function App() {
         <WelcomeScreen onSetupPhotoSources={handleSetupPhotoSources} />
       ) : currentMode === 'settings' ? (
         <SettingsView 
-          onStartScreensaver={handleStartScreensaver} 
+          onStartSlideshow={handleStartSlideshow} 
           initialEditingSource={shouldStartWithAddSource ? null : undefined}
         />
       ) : (
-        <ScreensaverView onExit={handleExitScreensaver} />
+        <SlideshowView onExit={handleExitSlideshow} />
       )}
     </div>
   )

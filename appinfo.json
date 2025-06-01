@@ -1,12 +1,12 @@
 {
-  "id": "com.immich.screensaver",
+  "id": "com.zchromosome.webosimmichslideshow",
   "version": "1.0.0",
-  "vendor": "Immich",
+  "vendor": "Dario Ahdoot",
   "type": "web",
   "main": "dist/index.html",
-  "title": "Immich Photo Screensaver",
+  "title": "Immich Photo Slideshow",
   "resolution": "1920x1080",
-  "appDescription": "A WebOS screensaver app that displays photos from various sources including Immich",
+  "appDescription": "A WebOS slideshow app that displays photos from various sources including Immich",
   "requiredPermissions": [
     "network.access"
   ]

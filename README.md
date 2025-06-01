@@ -1,6 +1,6 @@
-# Immich WebOS Photo Screensaver
+# Immich WebOS Photo Slideshow
 
-A WebOS screensaver application that displays photos from various sources, with initial support for Immich and designed for extensibility to other photo services.
+A WebOS slideshow application that displays photos from various sources, with initial support for Immich and designed for extensibility to other photo services.
 
 ## Features
 
@@ -41,7 +41,7 @@ A WebOS screensaver application that displays photos from various sources, with 
 src/
 ├── components/           # React components
 │   ├── SettingsView.tsx     # Main settings interface
-│   ├── ScreensaverView.tsx  # Slideshow display
+│   ├── SlideshowView.tsx    # Slideshow display
 │   ├── PhotoDisplay.tsx     # Photo rendering with layouts
 │   ├── MetadataOverlay.tsx  # Photo information display
 │   ├── PhotoSourceConfig.tsx # Source configuration

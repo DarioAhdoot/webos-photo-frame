@@ -1,5 +1,5 @@
 {
-  "name": "immich-web-os",
+  "name": "webosimmichslideshow",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "webos:build": "npm run build && npm run webos:package",
     "webos:package": "ares-package dist",
-    "webos:install": "ares-install com.immich.screensaver_1.0.0_all.ipk",
-    "webos:launch": "ares-launch com.immich.screensaver"
+    "webos:install": "ares-install com.zchromosome.webosimmichslideshow_1.0.0_all.ipk",
+    "webos:launch": "ares-launch com.zchromosome.webosimmichslideshow"
   },
   "dependencies": {
     "react": "^18.3.1",
