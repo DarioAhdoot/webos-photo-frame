@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **WebOS TV application** - a photo screensaver that displays photos from Immich servers on LG WebOS smart TVs. The app automatically launches into screensaver mode and allows users to configure photo sources through TV remote navigation.
 
+## Key Principles
+
+- Always use reusable components
+- Remember this is a WebOS app for TV, not a regular browser
+- All User Interface/Interactions should be assumed to be on a TV using an LG remote control
+
 ## Key Development Commands
 
 ### WebOS Development
@@ -121,3 +127,4 @@ Uses IP-based geolocation (no WebOS location API dependency):
 1. `GeolocationService.ts`: Gets user location via IP
 2. `WeatherService.ts`: Fetches weather data using coordinates
 3. `useWeather.ts`: React hook with caching and error handling
+```

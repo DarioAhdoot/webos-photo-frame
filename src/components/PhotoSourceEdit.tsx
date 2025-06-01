@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useTestConnection } from '../hooks/usePhotoSources'
-import { Button, Input, Card, ToggleButton, EnabledToggle } from './ui'
+import { Button, Input, Card, ToggleButton, EnabledToggle, ConfirmModal } from './ui'
 import ConnectionTestModal from './ConnectionTestModal'
 import type { PhotoSource, ImmichConfig } from '../types'
 
@@ -48,6 +48,22 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
   const testConnection = useTestConnection(formData.id)
   const config = formData.config as ImmichConfig
   const [showTestModal, setShowTestModal] = useState(false)
+  const [showBackConfirm, setShowBackConfirm] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  // Handle TV remote back button
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Handle TV remote back button (mapped to Escape key in WebOS)
+      if (event.key === 'Escape' || event.key === 'Back') {
+        event.preventDefault()
+        handleBack()
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, []) // Empty dependency array since handleBack will handle the latest state
 
   const updateConfig = (updates: Partial<ImmichConfig>) => {
     const newConfig = { ...config, ...updates }
@@ -94,19 +110,27 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
 
   const handleBack = () => {
     if (hasChanges()) {
-      const shouldDiscard = window.confirm(
-        'You have unsaved changes. Are you sure you want to go back without saving?'
-      )
-      if (!shouldDiscard) {
-        return
-      }
+      setShowBackConfirm(true)
+    } else {
+      onBack()
     }
+  }
+
+  const confirmBack = () => {
+    setShowBackConfirm(false)
     onBack()
   }
 
   const handleDelete = () => {
-    if (source && window.confirm('Are you sure you want to remove this photo source?')) {
+    if (source) {
+      setShowDeleteConfirm(true)
+    }
+  }
+
+  const confirmDelete = () => {
+    if (source) {
       removePhotoSource(source.id)
+      setShowDeleteConfirm(false)
       onBack()
     }
   }
@@ -319,6 +343,35 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
         isOpen={showTestModal}
         onClose={() => setShowTestModal(false)}
         photoSource={formData}
+      />
+
+      <ConfirmModal
+        isOpen={showBackConfirm}
+        onClose={() => setShowBackConfirm(false)}
+        onConfirm={confirmBack}
+        title="Unsaved Changes"
+        message="You have unsaved changes. Are you sure you want to go back without saving?"
+        confirmText="Discard Changes"
+        cancelText="Keep Editing"
+        variant="warning"
+      />
+
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title="Remove Photo Source"
+        message={
+          <div>
+            Are you sure you want to remove <strong>"{source?.name}"</strong>?
+            <br />
+            <br />
+            This action cannot be undone.
+          </div>
+        }
+        confirmText="Remove Source"
+        cancelText="Cancel"
+        variant="danger"
       />
     </div>
   )

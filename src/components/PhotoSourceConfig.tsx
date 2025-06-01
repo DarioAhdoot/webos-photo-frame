@@ -1,5 +1,5 @@
 import { useSettingsStore } from '../stores/settingsStore'
-import { Button } from './ui'
+import { Button, Card, StatusBadge } from './ui'
 import type { PhotoSource, ImmichConfig } from '../types'
 
 interface PhotoSourceConfigProps {
@@ -15,15 +15,15 @@ export default function PhotoSourceConfig({ onEditSource }: PhotoSourceConfigPro
 
   const getSourceStatus = (source: PhotoSource) => {
     if (!source.enabled) {
-      return { text: 'Disabled', class: 'text-gray-400 bg-gray-700 border-gray-600' }
+      return { text: 'Disabled', variant: 'disabled' as const }
     }
     
     const config = source.config as ImmichConfig
     if (!config.serverUrl || (!config.apiKey && (!config.username || !config.password))) {
-      return { text: 'Setup Required', class: 'text-amber-400 bg-amber-900 border-amber-700' }
+      return { text: 'Setup Required', variant: 'warning' as const }
     }
     
-    return { text: 'Enabled', class: 'text-green-400 bg-green-900 border-green-700' }
+    return { text: 'Enabled', variant: 'enabled' as const }
   }
 
   const getAlbumCount = (source: PhotoSource) => {
@@ -33,49 +33,51 @@ export default function PhotoSourceConfig({ onEditSource }: PhotoSourceConfigPro
   }
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-10 pb-10">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-semibold">Photo Sources</h2>
+        <h2 className="text-4xl font-semibold">Photo Sources</h2>
         <Button
           variant="primary"
           size="lg"
           onClick={handleAddSource}
+          className="text-2xl px-8 py-4"
         >
           Add Immich Source
         </Button>
       </div>
 
       {photoSources.length === 0 ? (
-        <div className="text-center py-16 text-dark-muted">
-          <div className="text-6xl mb-6">📁</div>
-          <div className="text-2xl mb-3">No photo sources configured</div>
-          <div className="text-lg">Add a source to get started</div>
+        <div className="text-center py-20 text-dark-muted">
+          <div className="text-8xl mb-8">📁</div>
+          <div className="text-3xl mb-4">No photo sources configured</div>
+          <div className="text-2xl">Add a source to get started</div>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {photoSources.map((source) => {
             const config = source.config as ImmichConfig
             const status = getSourceStatus(source)
             const albumCount = getAlbumCount(source)
             
             return (
-              <div 
-                key={source.id} 
+              <Card
+                key={source.id}
+                padding="xl"
+                className="hover:border-blue-500 cursor-pointer transition-all duration-200 hover:bg-gray-800 p-10"
                 onClick={() => onEditSource(source)}
-                className="bg-dark-card p-8 rounded-xl border border-dark-border shadow-sm hover:border-blue-500 cursor-pointer transition-all duration-200 hover:bg-gray-800"
               >
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-2xl font-semibold text-dark-text">{source.name}</h3>
-                      <p className="text-lg text-dark-muted capitalize">{source.type} server</p>
+                      <h3 className="text-3xl font-semibold text-dark-text">{source.name}</h3>
+                      <p className="text-2xl text-dark-muted capitalize">{source.type} server</p>
                     </div>
-                    <span className={`px-3 py-2 rounded-lg text-sm border font-medium ${status.class}`}>
+                    <StatusBadge variant={status.variant} size="lg">
                       {status.text}
-                    </span>
+                    </StatusBadge>
                   </div>
                   
-                  <div className="space-y-3 text-lg">
+                  <div className="space-y-4 text-2xl">
                     <div>
                       <span className="text-dark-muted">URL: </span>
                       <span className="text-dark-text">
@@ -88,13 +90,13 @@ export default function PhotoSourceConfig({ onEditSource }: PhotoSourceConfigPro
                     </div>
                   </div>
                   
-                  <div className="pt-4 border-t border-dark-border">
-                    <div className="text-base text-dark-muted">
+                  <div className="pt-6 border-t border-dark-border">
+                    <div className="text-xl text-dark-muted">
                       Click to configure this source
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             )
           })}
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ImmichPhotoSource } from '../services/ImmichPhotoSource'
+import { Button, LoadingState, ErrorState, EmptyState, Checkbox } from './ui'
 import type { PhotoSource } from '../types'
 import type { Album } from '../services/PhotoSourceBase'
 
@@ -118,29 +119,23 @@ export default function AlbumSelectionView({
   if (loading) {
     return (
       <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
-        <div className="flex-shrink-0 bg-dark-card shadow-sm border-b p-6">
+        <div className="flex-shrink-0 bg-dark-card shadow-sm border-b border-dark-border p-8">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-dark-text">Select Albums</h1>
-              <button
-                onClick={onBack}
-                className="px-4 py-2 text-dark-muted hover:text-dark-text"
-              >
+              <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
+              <Button variant="ghost" size="lg" onClick={onBack}>
                 ← Back
-              </button>
+              </Button>
             </div>
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="text-4xl mb-4 animate-pulse">📷</div>
-                <div className="text-lg text-dark-text">Loading albums...</div>
-                <div className="text-sm text-dark-muted mt-2">Fetching from {photoSource.name}</div>
-              </div>
-            </div>
+            <LoadingState
+              title="Loading albums..."
+              subtitle={`Fetching from ${photoSource.name}`}
+            />
           </div>
         </div>
       </div>
@@ -150,35 +145,24 @@ export default function AlbumSelectionView({
   if (error) {
     return (
       <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
-        <div className="flex-shrink-0 bg-dark-card shadow-sm border-b p-6">
+        <div className="flex-shrink-0 bg-dark-card shadow-sm border-b border-dark-border p-8">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-dark-text">Select Albums</h1>
-              <button
-                onClick={onBack}
-                className="px-4 py-2 text-dark-muted hover:text-dark-text"
-              >
+              <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
+              <Button variant="ghost" size="lg" onClick={onBack}>
                 ← Back
-              </button>
+              </Button>
             </div>
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="text-4xl mb-4">⚠️</div>
-                <div className="text-lg text-dark-text">Failed to load albums</div>
-                <div className="text-sm text-dark-muted mt-2">{error}</div>
-                <button
-                  onClick={loadAlbums}
-                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Try Again
-                </button>
-              </div>
-            </div>
+            <ErrorState
+              title="Failed to load albums"
+              message={error}
+              onRetry={loadAlbums}
+            />
           </div>
         </div>
       </div>
@@ -187,68 +171,61 @@ export default function AlbumSelectionView({
 
   return (
     <div className="h-screen bg-gray-700 flex flex-col overflow-hidden">
-      <div className="flex-shrink-0 bg-dark-card shadow-sm border-b p-6">
+      <div className="flex-shrink-0 bg-dark-card shadow-sm border-b border-dark-border p-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-dark-text">Select Albums</h1>
-              <p className="text-dark-muted mt-1">
+              <h1 className="text-3xl font-bold text-dark-text">Select Albums</h1>
+              <p className="text-xl text-dark-muted mt-2">
                 Choose albums from {photoSource.name} • {selectedAlbumIds.length} selected
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               {albums.length > 0 && (
                 <>
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="lg"
                     onClick={handleSelectAll}
-                    className="px-3 py-2 text-blue-400 hover:bg-blue-900/20 rounded border border-blue-400/30"
                     disabled={selectedAlbumIds.length === albums.length}
                   >
                     Select All
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="lg"
                     onClick={handleDeselectAll}
-                    className="px-3 py-2 text-dark-muted hover:bg-gray-600 rounded border border-dark-border"
                     disabled={selectedAlbumIds.length === 0}
                   >
                     Deselect All
-                  </button>
+                  </Button>
                 </>
               )}
-              <button
-                onClick={onBack}
-                className="px-4 py-2 text-dark-muted hover:text-dark-text"
-              >
+              <Button variant="ghost" size="lg" onClick={onBack}>
                 ← Back
-              </button>
-              <button
-                onClick={onSave}
-                className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
+              </Button>
+              <Button variant="primary" size="lg" onClick={onSave}>
                 Save Selection
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-8">
         <div className="max-w-6xl mx-auto">
           {albums.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">📷</div>
-              <div className="text-lg text-dark-text">No albums found</div>
-              <div className="text-sm text-dark-muted mt-2">
-                This photo source doesn't have any albums
-              </div>
-            </div>
+            <EmptyState
+              title="No albums found"
+              message="This photo source doesn't have any albums"
+            />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-8">
               {albums.map((album) => (
                 <div
                   key={album.id}
                   onClick={() => handleAlbumClick(album.id)}
-                  className={`relative cursor-pointer group rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                  className={`relative cursor-pointer group rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                     isAlbumSelected(album.id)
                       ? 'border-blue-400 ring-2 ring-blue-400/30'
                       : 'border-dark-border hover:border-gray-500'
@@ -262,43 +239,26 @@ export default function AlbumSelectionView({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="text-4xl text-gray-400">📷</div>
+                      <div className="text-5xl text-gray-400">📷</div>
                     )}
                   </div>
                   
-                  <div className="absolute top-2 right-2">
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        isAlbumSelected(album.id)
-                          ? 'bg-blue-500 border-blue-500'
-                          : 'bg-dark-card border-dark-border group-hover:border-gray-500'
-                      }`}
-                    >
-                      {isAlbumSelected(album.id) && (
-                        <svg
-                          className="w-3 h-3 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </div>
+                  <div className="absolute top-3 right-3">
+                    <Checkbox 
+                      checked={isAlbumSelected(album.id)} 
+                      size="lg"
+                    />
                   </div>
 
-                  <div className="p-3 bg-dark-card">
-                    <h3 className="font-medium text-sm truncate text-dark-text" title={album.name}>
+                  <div className="p-4 bg-dark-card">
+                    <h3 className="font-medium text-lg truncate text-dark-text" title={album.name}>
                       {album.name}
                     </h3>
-                    <p className="text-xs text-dark-muted mt-1">
+                    <p className="text-base text-dark-muted mt-1">
                       {album.photoCount} photo{album.photoCount !== 1 ? 's' : ''}
                     </p>
                     {album.description && (
-                      <p className="text-xs text-dark-muted/70 mt-1 line-clamp-2" title={album.description}>
+                      <p className="text-sm text-dark-muted/70 mt-2 line-clamp-2" title={album.description}>
                         {album.description}
                       </p>
                     )}

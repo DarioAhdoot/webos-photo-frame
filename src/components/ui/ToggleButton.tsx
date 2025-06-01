@@ -6,6 +6,7 @@ interface ToggleButtonProps {
   onClick: () => void
   disabled?: boolean
   size?: 'md' | 'lg' | 'xl'
+  fullWidth?: boolean
   className?: string
 }
 
@@ -15,6 +16,7 @@ export default function ToggleButton({
   onClick, 
   disabled = false,
   size = 'lg',
+  fullWidth = false,
   className = ''
 }: ToggleButtonProps) {
   const sizeClasses = {
@@ -33,7 +35,9 @@ export default function ToggleButton({
     ? 'opacity-50 cursor-not-allowed' 
     : 'cursor-pointer'
   
-  const classes = `${baseClasses} ${sizeClasses[size]} ${activeClasses} ${disabledClasses} ${className}`.trim()
+  const widthClasses = fullWidth ? 'w-full' : ''
+  
+  const classes = `${baseClasses} ${sizeClasses[size]} ${activeClasses} ${disabledClasses} ${widthClasses} ${className}`.trim()
   
   return (
     <button 
