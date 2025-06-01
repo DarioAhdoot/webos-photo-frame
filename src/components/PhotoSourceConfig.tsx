@@ -9,7 +9,6 @@ interface PhotoSourceConfigProps {
 
 export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceConfigProps) {
   const { photoSources, addPhotoSource, updatePhotoSource, removePhotoSource } = useSettingsStore()
-  const [showAddModal, setShowAddModal] = useState(false)
 
   const handleAddImmichSource = () => {
     const newSource: PhotoSource = {
@@ -26,7 +25,6 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
       enabled: false,
     }
     addPhotoSource(newSource)
-    setShowAddModal(false)
   }
 
   return (
@@ -34,10 +32,10 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Photo Sources</h2>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={handleAddImmichSource}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         >
-          Add Source
+          Add Immich Source
         </button>
       </div>
 
@@ -51,52 +49,64 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
         <div className="space-y-4">
           {photoSources.map((source) => (
             <div key={source.id} className="bg-dark-card p-4 rounded-lg border border-dark-border shadow-sm">
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex-1 mr-4">
-                  <input
-                    type="text"
-                    value={source.name}
-                    onChange={(e) => updatePhotoSource(source.id, { name: e.target.value })}
-                    className="font-medium text-lg bg-transparent border-none p-0 w-full focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
-                    placeholder="Source name"
-                  />
-                  <div className="text-sm text-dark-muted capitalize">{source.type} server</div>
-                </div>
-                <div className="flex gap-3 items-center">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={source.enabled}
-                      onChange={(e) => updatePhotoSource(source.id, { enabled: e.target.checked })}
-                      className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-dark-border rounded"
-                    />
-                    <span className={`text-sm font-medium ${
-                      source.enabled ? 'text-green-400' : 'text-dark-muted'
-                    }`}>
-                      {source.enabled ? 'Enabled' : 'Disabled'}
-                    </span>
-                  </label>
-                  
-                  {/* Configuration status indicator */}
-                  <div className="text-xs">
+              <div className="mb-3">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="text-xl font-semibold text-dark-text capitalize">{source.type} server</div>
                     {source.config && (source.config as ImmichConfig).serverUrl ? (
-                      <span className="text-green-400 bg-green-900 px-2 py-1 rounded">
+                      <span className="text-green-400 bg-green-900 px-2 py-1 rounded text-xs border border-green-700">
                         Configured
                       </span>
                     ) : (
-                      <span className="text-amber-400 bg-amber-900 px-2 py-1 rounded">
+                      <span className="text-amber-400 bg-amber-900 px-2 py-1 rounded text-xs border border-amber-700">
                         Setup Required
                       </span>
                     )}
                   </div>
                   
-                  <button
-                    onClick={() => removePhotoSource(source.id)}
-                    className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-900"
-                  >
-                    Remove
-                  </button>
+                  <div className="flex gap-3 items-center">
+                    <button
+                      onClick={() => updatePhotoSource(source.id, { enabled: !source.enabled })}
+                      className={`flex items-center px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${
+                        source.enabled 
+                          ? 'bg-green-600 border-green-500 text-white hover:bg-green-700 focus:border-green-400' 
+                          : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 focus:border-gray-400'
+                      }`}
+                      tabIndex={0}
+                    >
+                      <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                        source.enabled 
+                          ? 'bg-white border-white' 
+                          : 'bg-transparent border-gray-400'
+                      }`}>
+                        {source.enabled && (
+                          <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium">
+                        {source.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </button>
+                    
+                    <button
+                      onClick={() => removePhotoSource(source.id)}
+                      className="px-4 py-3 rounded-lg border-2 border-red-600 bg-red-600 text-white hover:bg-red-700 hover:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 focus:border-red-400 transition-all duration-200 text-sm font-medium"
+                      tabIndex={0}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
+                
+                <input
+                  type="text"
+                  value={source.name}
+                  onChange={(e) => updatePhotoSource(source.id, { name: e.target.value })}
+                  className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
+                  placeholder="Unnamed source"
+                />
               </div>
               
               {source.type === 'immich' && (
@@ -111,37 +121,6 @@ export default function PhotoSourceConfig({ onOpenAlbumSelection }: PhotoSourceC
         </div>
       )}
 
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-dark-card rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4 text-dark-text">Add Photo Source</h3>
-            <div className="space-y-3">
-              <button
-                onClick={handleAddImmichSource}
-                className="w-full p-3 text-left border border-dark-border rounded-lg hover:bg-gray-700"
-              >
-                <div className="font-medium text-dark-text">Immich Server</div>
-                <div className="text-sm text-dark-muted">Connect to your Immich instance</div>
-              </button>
-              <button
-                disabled
-                className="w-full p-3 text-left border border-dark-border rounded-lg opacity-50 cursor-not-allowed"
-              >
-                <div className="font-medium text-dark-text">Google Photos</div>
-                <div className="text-sm text-dark-muted">Coming soon</div>
-              </button>
-            </div>
-            <div className="flex gap-2 mt-6">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="flex-1 px-4 py-2 border border-dark-border rounded-lg hover:bg-gray-700 text-dark-text"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
@@ -153,23 +132,20 @@ interface ImmichSourceConfigProps {
 }
 
 function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSourceConfigProps) {
-  const [localConfig, setLocalConfig] = useState<ImmichConfig>(source.config as ImmichConfig)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [authType, setAuthType] = useState<'apiKey' | 'password'>(() => {
     // Determine initial auth type based on existing config
-    if (localConfig.apiKey) return 'apiKey'
-    if (localConfig.username && localConfig.password) return 'password'
+    const config = source.config as ImmichConfig
+    if (config.apiKey) return 'apiKey'
+    if (config.username && config.password) return 'password'
     return 'apiKey' // default
   })
   
   const testConnection = useTestConnection(source.id)
+  const config = source.config as ImmichConfig
 
-  const updateLocalConfig = (updates: Partial<ImmichConfig>) => {
-    const newConfig = { ...localConfig, ...updates }
-    setLocalConfig(newConfig)
-    setHasUnsavedChanges(true)
-    setSaveStatus('idle')
+  const updateConfig = (updates: Partial<ImmichConfig>) => {
+    const newConfig = { ...config, ...updates }
+    onUpdate(source.id, { config: newConfig })
   }
 
   const handleAuthTypeChange = (newAuthType: 'apiKey' | 'password') => {
@@ -177,55 +153,9 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
     
     // Clear fields from the other auth method
     if (newAuthType === 'apiKey') {
-      updateLocalConfig({ username: '', password: '' })
+      updateConfig({ username: '', password: '' })
     } else {
-      updateLocalConfig({ apiKey: '' })
-    }
-  }
-
-  const handleSave = async () => {
-    setSaveStatus('saving')
-    try {
-      onUpdate(source.id, {
-        config: localConfig
-      })
-      setHasUnsavedChanges(false)
-      setSaveStatus('saved')
-      setTimeout(() => setSaveStatus('idle'), 2000)
-    } catch (error) {
-      setSaveStatus('error')
-      setTimeout(() => setSaveStatus('idle'), 3000)
-    }
-  }
-
-  const handleTestConnection = async () => {
-    if (hasUnsavedChanges) {
-      handleSave()
-      // Wait a bit for the save to complete
-      setTimeout(() => testConnection.refetch(), 100)
-    } else {
-      testConnection.refetch()
-    }
-  }
-
-  const getSaveButtonText = () => {
-    switch (saveStatus) {
-      case 'saving': return 'Saving...'
-      case 'saved': return 'Saved ✓'
-      case 'error': return 'Error saving'
-      default: return hasUnsavedChanges ? 'Save Changes' : 'Saved'
-    }
-  }
-
-  const getSaveButtonClass = () => {
-    const baseClass = 'px-4 py-2 rounded-md text-sm font-medium '
-    switch (saveStatus) {
-      case 'saving': return baseClass + 'bg-gray-500 text-white cursor-not-allowed'
-      case 'saved': return baseClass + 'bg-green-600 text-white'
-      case 'error': return baseClass + 'bg-red-600 text-white'
-      default: return hasUnsavedChanges 
-        ? baseClass + 'bg-blue-600 text-white hover:bg-blue-700'
-        : baseClass + 'bg-gray-600 text-dark-muted cursor-default'
+      updateConfig({ apiKey: '' })
     }
   }
 
@@ -241,7 +171,7 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
     }
     if (testConnection.data === true) return { text: 'Connected ✓', class: 'text-green-400', detail: null }
     if (testConnection.data === false) return { text: 'Connection failed', class: 'text-red-400', detail: null }
-    return { text: 'Not tested', class: 'text-dark-muted', detail: null }
+    return null
   }
 
   const connectionStatus = getConnectionStatus()
@@ -252,8 +182,8 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
         <label className="block text-sm font-medium mb-1 text-dark-text">Server URL</label>
         <input
           type="url"
-          value={localConfig.serverUrl}
-          onChange={(e) => updateLocalConfig({ serverUrl: e.target.value })}
+          value={config.serverUrl}
+          onChange={(e) => updateConfig({ serverUrl: e.target.value })}
           placeholder="http://your-server.com:2283"
           className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
         />
@@ -294,8 +224,8 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
             <label className="block text-sm font-medium mb-1 text-dark-text">API Key</label>
             <input
               type="password"
-              value={localConfig.apiKey || ''}
-              onChange={(e) => updateLocalConfig({ apiKey: e.target.value })}
+              value={config.apiKey || ''}
+              onChange={(e) => updateConfig({ apiKey: e.target.value })}
               placeholder="Your Immich API key"
               className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
             />
@@ -309,8 +239,8 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
               <label className="block text-sm font-medium mb-1 text-dark-text">Username (Email)</label>
               <input
                 type="email"
-                value={localConfig.username || ''}
-                onChange={(e) => updateLocalConfig({ username: e.target.value })}
+                value={config.username || ''}
+                onChange={(e) => updateConfig({ username: e.target.value })}
                 placeholder="your-email@example.com"
                 className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
               />
@@ -319,8 +249,8 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
               <label className="block text-sm font-medium mb-1 text-dark-text">Password</label>
               <input
                 type="password"
-                value={localConfig.password || ''}
-                onChange={(e) => updateLocalConfig({ password: e.target.value })}
+                value={config.password || ''}
+                onChange={(e) => updateConfig({ password: e.target.value })}
                 placeholder="Your Immich password"
                 className="w-full px-3 py-2 border border-dark-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-dark-card text-dark-text"
               />
@@ -333,63 +263,45 @@ function ImmichSourceConfig({ source, onUpdate, onOpenAlbumSelection }: ImmichSo
         <label className="block text-sm font-medium mb-1 text-dark-text">Albums</label>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => {
-              // Save current changes before opening album selection
-              if (hasUnsavedChanges) {
-                handleSave()
-              }
-              onOpenAlbumSelection(source)
-            }}
-            disabled={!localConfig.serverUrl || 
-              (authType === 'apiKey' && !localConfig.apiKey) ||
-              (authType === 'password' && (!localConfig.username || !localConfig.password))}
+            onClick={() => onOpenAlbumSelection(source)}
+            disabled={!config.serverUrl || 
+              (authType === 'apiKey' && !config.apiKey) ||
+              (authType === 'password' && (!config.username || !config.password))}
             className="px-4 py-2 border border-dark-border rounded-md text-sm font-medium text-dark-text hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Select Albums ({localConfig.albumIds.length} selected)
+            Select Albums ({config.albumIds.length} selected)
           </button>
           <div className="text-xs text-dark-muted">
-            {localConfig.albumIds.length === 0 ? 'All albums will be used' : `${localConfig.albumIds.length} album${localConfig.albumIds.length !== 1 ? 's' : ''} selected`}
+            {config.albumIds.length === 0 ? 'All albums will be used' : `${config.albumIds.length} album${config.albumIds.length !== 1 ? 's' : ''} selected`}
           </div>
         </div>
       </div>
       
-      {/* Save and Test Actions */}
-      <div className="flex gap-3 pt-2">
+      {/* Test Connection */}
+      <div className="flex gap-3 pt-2 items-center">
         <button
-          onClick={handleSave}
-          disabled={!hasUnsavedChanges || saveStatus === 'saving'}
-          className={getSaveButtonClass()}
-        >
-          {getSaveButtonText()}
-        </button>
-        
-        <button
-          onClick={handleTestConnection}
-          disabled={testConnection.isLoading || !localConfig.serverUrl || 
-            (authType === 'apiKey' && !localConfig.apiKey) ||
-            (authType === 'password' && (!localConfig.username || !localConfig.password))}
+          onClick={() => testConnection.refetch()}
+          disabled={testConnection.isLoading || !config.serverUrl || 
+            (authType === 'apiKey' && !config.apiKey) ||
+            (authType === 'password' && (!config.username || !config.password))}
           className="px-4 py-2 border border-dark-border rounded-md text-sm font-medium text-dark-text hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {testConnection.isLoading ? 'Testing...' : 'Test Connection'}
         </button>
         
-        <div className="flex flex-col items-start">
-          <span className={`text-sm ${connectionStatus.class}`}>
-            {connectionStatus.text}
-          </span>
-          {connectionStatus.detail && (
-            <span className="text-xs text-red-400 mt-1 max-w-xs">
-              {connectionStatus.detail}
+        {connectionStatus && (
+          <div className="flex flex-col items-start">
+            <span className={`text-sm ${connectionStatus.class}`}>
+              {connectionStatus.text}
             </span>
-          )}
-        </div>
+            {connectionStatus.detail && (
+              <span className="text-xs text-red-400 mt-1 max-w-xs">
+                {connectionStatus.detail}
+              </span>
+            )}
+          </div>
+        )}
       </div>
-      
-      {hasUnsavedChanges && (
-        <div className="text-xs text-amber-400 bg-amber-900 p-2 rounded">
-          💡 You have unsaved changes. Click "Save Changes" to apply them.
-        </div>
-      )}
     </div>
   )
 }
