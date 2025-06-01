@@ -149,7 +149,6 @@ interface PhotoSourceAPI {
 
 Current implementations:
 - **ImmichPhotoSource**: Full Immich API integration
-- **GooglePhotosSource**: Planned
 - **LocalFileSource**: Planned
 
 ### Caching Strategy
@@ -175,7 +174,7 @@ Current implementations:
 
 Example:
 ```typescript
-export class GooglePhotosSource extends PhotoSourceBase {
+export class LocalFileSource extends PhotoSourceBase {
   async testConnection(): Promise<boolean> {
     // Implementation
   }
@@ -192,7 +191,7 @@ export class GooglePhotosSource extends PhotoSourceBase {
 
 This project is built with extensibility in mind. Key areas for contribution:
 
-- Additional photo source providers (Google Photos, Dropbox, etc.)
+- Additional photo source providers (Dropbox, network shares, etc.)
 - Enhanced layout options for different photo orientations
 - Weather integration
 - Performance optimizations

@@ -59,7 +59,7 @@ This is a **dual-mode WebOS application** with two primary views:
 - `PhotoSourceBase.ts`: Abstract interface for photo providers
 - `ImmichPhotoSource.ts`: Immich server integration with authentication
 - `PhotoSourceManager.ts`: Coordinates multiple photo sources
-- Ready for expansion to Google Photos, local files, etc.
+- Ready for expansion to local files, network shares, etc.
 
 ### Service Layer
 
