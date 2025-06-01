@@ -14,10 +14,10 @@ interface SettingsStore {
 const defaultSettings: AppSettings = {
   slideshow: {
     interval: 10,
-    transition: 'fade',
+    transition: 'ken-burns',
     order: 'random',
     videoEnabled: true,
-    videoPlayback: 'full',
+    videoPlayback: 'duration',
     videoMuted: true,
   },
   layout: {
