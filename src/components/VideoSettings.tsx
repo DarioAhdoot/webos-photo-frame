@@ -46,7 +46,7 @@ export default function VideoSettings() {
           {settings.slideshow.videoEnabled && (
             <>
               <div>
-                <h3 className="text-2xl font-medium mb-6">Video Playback Mode</h3>
+                <h3 className="text-2xl font-medium mb-6">Video playback mode</h3>
                 <div className="space-y-4 mb-6">
                   <button
                     onClick={() => handleSlideshowChange('videoPlayback', 'full')}
@@ -56,7 +56,7 @@ export default function VideoSettings() {
                         : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-2 border-transparent'
                     }`}
                   >
-                    Play Full Video
+                    Play full video
                   </button>
                   <button
                     onClick={() => handleSlideshowChange('videoPlayback', 'duration')}
@@ -66,7 +66,7 @@ export default function VideoSettings() {
                         : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-2 border-transparent'
                     }`}
                   >
-                    Limit Duration
+                    Limit duration
                   </button>
                   {settings.slideshow.videoPlayback === 'duration' && (
                     <div className="text-md text-blue-300 mt-2 text-center">

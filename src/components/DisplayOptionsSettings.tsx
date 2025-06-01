@@ -29,7 +29,7 @@ export default function DisplayOptionsSettings() {
               >
                 <span className="flex items-center justify-center">
                   <span className={`mr-4 text-2xl ${settings.display.showMetadata ? '✓' : '○'}`}></span>
-                  Show Photo Metadata
+                  Show photo metadata
                 </span>
               </button>
 
@@ -43,7 +43,7 @@ export default function DisplayOptionsSettings() {
               >
                 <span className="flex items-center justify-center">
                   <span className={`mr-4 text-2xl ${settings.display.showWeather ? '✓' : '○'}`}></span>
-                  Show Weather Information
+                  Show weather information
                 </span>
               </button>
             </div>

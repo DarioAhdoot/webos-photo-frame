@@ -76,10 +76,10 @@ export default function TransitionEffectSettings() {
                       : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-2 border-transparent'
                   }`}
                 >
-                  Ken Burns (Recommended)
+                  Ken Burns (recommended)
                 </button>
                 <div className="text-md text-gray-400 mt-2 text-center">
-                  Adds subtle zoom and pan effects like Apple TV screensavers
+                  Adds subtle zoom and pan effects
                 </div>
               </div>
             </div>

@@ -17,7 +17,7 @@ export default function MediaOrderSettings() {
       <div>
         <div className="bg-dark-card p-8 rounded-xl border-dark-border shadow-sm">
           <div>
-            <h2 className="text-3xl font-semibold mb-6">Photo Display Order</h2>
+            <h2 className="text-3xl font-semibold mb-6">Display Order</h2>
             <div className="space-y-4 mb-6">
               <button
                 onClick={() => handleSlideshowChange('order', 'random')}
@@ -41,7 +41,7 @@ export default function MediaOrderSettings() {
               </button>
             </div>
             <div className="text-lg text-dark-muted">
-              Whether to display photos in a random order or in sequence
+              Whether to display media in a random order or in sequence
             </div>
           </div>
         </div>

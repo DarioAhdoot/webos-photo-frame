@@ -249,7 +249,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
                     : 'text-dark-muted hover:bg-gray-700'
                 }`}
               >
-                Photo Refresh
+                Library Refresh
               </button>
               <button
                 onClick={() => setActiveTab('cache')}

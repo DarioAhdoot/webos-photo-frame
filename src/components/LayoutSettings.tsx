@@ -27,7 +27,7 @@ export default function LayoutSettings() {
                     : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-2 border-transparent'
                 }`}
               >
-                Single Photo
+                Single photo
               </button>
               <button
                 onClick={() => handleLayoutChange('portraitLayout', 'dual')}
@@ -37,7 +37,7 @@ export default function LayoutSettings() {
                     : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-2 border-transparent'
                 }`}
               >
-                Two Photos Side by Side
+                Two photos side by side
               </button>
               <button
                 onClick={() => handleLayoutChange('portraitLayout', 'blurred-bg')}
@@ -47,7 +47,7 @@ export default function LayoutSettings() {
                     : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-2 border-transparent'
                 }`}
               >
-                Photo with Blurred Background
+                Photo with blurred background
               </button>
             </div>
             <div className="text-lg text-dark-muted">

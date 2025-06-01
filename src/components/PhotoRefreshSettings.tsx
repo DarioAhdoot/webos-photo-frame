@@ -24,7 +24,7 @@ export default function PhotoRefreshSettings() {
       <div>
         <div className="bg-dark-card p-8 rounded-xl border border-dark-border shadow-sm space-y-6">
           <div>
-            <h2 className="text-3xl font-semibold mb-6">Auto-refresh Photos</h2>
+            <h2 className="text-3xl font-semibold mb-6">Auto-refresh Media</h2>
             <div className="flex items-center gap-6 mb-6">
               <button
                 onClick={() => {
@@ -56,7 +56,7 @@ export default function PhotoRefreshSettings() {
               </button>
             </div>
             <div className="text-lg text-dark-muted mb-6">
-              How often to automatically fetch new photos from your sources
+              How often to automatically fetch new media from your sources
             </div>
           </div>
 
@@ -64,7 +64,7 @@ export default function PhotoRefreshSettings() {
             onClick={handleRefreshNow}
             className="px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-xl font-medium"
           >
-            Refresh Photos Now
+            Refresh Library Now
           </button>
         </div>
       </div>

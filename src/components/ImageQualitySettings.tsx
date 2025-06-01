@@ -17,7 +17,7 @@ export default function ImageQualitySettings() {
       <div>
         <div className="bg-dark-card p-8 rounded-xl border-dark-border shadow-sm">
           <div>
-            <h2 className="text-3xl font-semibold mb-6">Image Resolution</h2>
+            <h2 className="text-3xl font-semibold mb-6">Image Quality</h2>
             <div className="space-y-4 mb-6">
               <button
                 onClick={() => handleDisplayChange('imageResolution', 'optimized')}
@@ -27,7 +27,7 @@ export default function ImageQualitySettings() {
                     : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-2 border-transparent'
                 }`}
               >
-                Optimized (Recommended)
+                Optimized (recommended)
               </button>
               <button
                 onClick={() => handleDisplayChange('imageResolution', 'original')}
