@@ -4,6 +4,7 @@ import { useSettingsStore } from '../stores/settingsStore'
 import { useAppStore } from '../stores/appStore'
 import { useAllPhotos } from '../hooks/usePhotoSources'
 import PhotoSourceConfig from './PhotoSourceConfig'
+import PhotoSourceEdit from './PhotoSourceEdit'
 import PhotoIntervalSettings from './PhotoIntervalSettings'
 import TransitionEffectSettings from './TransitionEffectSettings'
 import MediaOrderSettings from './MediaOrderSettings'
@@ -26,6 +27,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   const queryClient = useQueryClient()
   const allPhotosQuery = useAllPhotos()
   const [activeTab, setActiveTab] = useState<'sources' | 'photo-interval' | 'transition-effect' | 'media-order' | 'image-quality' | 'display-options' | 'layout' | 'video' | 'photo-refresh' | 'cache'>('sources')
+  const [editingSource, setEditingSource] = useState<PhotoSource | null | undefined>(undefined) // undefined = not editing, null = new source, PhotoSource = editing existing
   const [albumSelectionView, setAlbumSelectionView] = useState<{
     photoSource: PhotoSource
     selectedAlbumIds: string[]
@@ -39,6 +41,14 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
   // Count photos and videos separately from current data
   const photoCount = currentPhotos.filter(photo => photo.type !== 'VIDEO').length
   const videoCount = currentPhotos.filter(photo => photo.type === 'VIDEO').length
+
+  const handleEditSource = (source: PhotoSource | null) => {
+    setEditingSource(source) // null means new source, PhotoSource means editing existing
+  }
+
+  const handleBackFromEdit = () => {
+    setEditingSource(undefined)
+  }
 
   const handleOpenAlbumSelection = (photoSource: PhotoSource) => {
     const config = photoSource.config as ImmichConfig
@@ -77,10 +87,17 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
     queryClient.invalidateQueries({ queryKey: ['all-photos'] })
     
     setAlbumSelectionView(null)
+    // Return to edit view after album selection
+    setEditingSource(albumSelectionView.photoSource)
   }
 
   const handleBackFromAlbumSelection = () => {
+    const sourceToReturn = albumSelectionView?.photoSource
     setAlbumSelectionView(null)
+    // Return to edit view after backing out of album selection
+    if (sourceToReturn) {
+      setEditingSource(sourceToReturn)
+    }
   }
 
   const handleAlbumBulkSelect = (albumIds: string[]) => {
@@ -90,6 +107,17 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
       ...albumSelectionView,
       selectedAlbumIds: albumIds
     })
+  }
+
+  // If edit view is active, show it instead of main settings
+  if (editingSource !== undefined) {
+    return (
+      <PhotoSourceEdit
+        source={editingSource}
+        onBack={handleBackFromEdit}
+        onOpenAlbumSelection={handleOpenAlbumSelection}
+      />
+    )
   }
 
   // If album selection view is active, show it instead of main settings
@@ -251,7 +279,7 @@ export default function SettingsView({ onStartScreensaver }: SettingsViewProps) 
 
         <main className="flex-1 overflow-y-auto bg-dark-bg">
           <div className="p-6">
-            {activeTab === 'sources' && <PhotoSourceConfig onOpenAlbumSelection={handleOpenAlbumSelection} />}
+            {activeTab === 'sources' && <PhotoSourceConfig onEditSource={handleEditSource} />}
             {activeTab === 'photo-interval' && <PhotoIntervalSettings />}
             {activeTab === 'transition-effect' && <TransitionEffectSettings />}
             {activeTab === 'media-order' && <MediaOrderSettings />}
