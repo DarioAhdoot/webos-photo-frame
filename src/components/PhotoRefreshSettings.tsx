@@ -62,9 +62,9 @@ export default function PhotoRefreshSettings() {
 
           <button
             onClick={handleRefreshNow}
-            className="px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-xl font-medium"
+            className="w-full px-8 py-6 rounded-xl text-xl font-medium text-center transition-colors bg-blue-600 text-white border-2 border-blue-500 hover:bg-blue-700"
           >
-            Refresh Library Now
+            Refresh library now
           </button>
         </div>
       </div>
