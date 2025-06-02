@@ -50,6 +50,8 @@ This is a **dual-mode WebOS application** with two primary views:
 - Optimized for 1920x1080 TV resolution
 - Remote control navigation support with proper scrolling
 - Network permissions for Immich API access
+- Magic Remote support for pointer and 5-way navigation
+- Virtual keyboard integration for text input fields
 
 ### State Management Pattern
 
@@ -92,6 +94,12 @@ This is a **dual-mode WebOS application** with two primary views:
 - **Smart caching**: 24-hour location cache, 30-minute weather cache
 - **Memory management**: Automatic cleanup of blob URLs and cached data
 - **Transition system**: Fade, slide, and none transitions optimized for TV displays
+
+### Input Handling for WebOS TV
+- **Magic Remote Support**: Dual-mode support for pointer and 5-way navigation
+- **Virtual Keyboard Integration**: Automatic layout adjustment when keyboard appears
+- **Smart Input Types**: Contextual keyboard layouts (text, URL, password, number)
+- **Focus Management**: Auto-scrolling to keep focused inputs visible
 
 ### Error Handling Strategy
 - **Graceful degradation**: App continues working if external services fail

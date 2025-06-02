@@ -194,9 +194,9 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
         </div>
       </header>
 
-      <main className="flex-1 bg-dark-bg p-8">
-        <div className="h-full max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 gap-8 h-full">
+      <main className="flex-1 bg-dark-bg overflow-y-auto">
+        <div className="max-w-6xl mx-auto p-8 pb-32"> {/* Extra bottom padding for keyboard */}
+          <div className="grid grid-cols-2 gap-8">
             {/* Left Column */}
             <div className="space-y-8">
               {/* Basic Information */}
@@ -204,7 +204,7 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
                 <div className="space-y-8">
                   <Input
                     label="Source Name"
-                    type="text"
+                    keyboardType="text"
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="My Immich Server"
@@ -213,7 +213,7 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
                   
                   <Input
                     label="Server URL"
-                    type="url"
+                    keyboardType="url"
                     value={config.serverUrl}
                     onChange={(e) => updateConfig({ serverUrl: e.target.value })}
                     placeholder="http://your-server.com:2283"
@@ -275,7 +275,7 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
                     {authType === 'apiKey' ? (
                       <Input
                         label="API Key"
-                        type="password"
+                        keyboardType="password"
                         value={config.apiKey || ''}
                         onChange={(e) => updateConfig({ apiKey: e.target.value })}
                         placeholder="Your Immich API key"
@@ -286,7 +286,7 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
                       <div className="space-y-6">
                         <Input
                           label="Username (Email)"
-                          type="email"
+                          keyboardType="text"
                           value={config.username || ''}
                           onChange={(e) => updateConfig({ username: e.target.value })}
                           placeholder="your-email@example.com"
@@ -294,7 +294,7 @@ export default function PhotoSourceEdit({ source, onBack, onOpenAlbumSelection }
                         />
                         <Input
                           label="Password"
-                          type="password"
+                          keyboardType="password"
                           value={config.password || ''}
                           onChange={(e) => updateConfig({ password: e.target.value })}
                           placeholder="Your Immich password"

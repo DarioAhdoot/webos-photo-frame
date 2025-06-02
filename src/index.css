@@ -37,6 +37,39 @@
     outline-offset: 2px;
     background-color: rgba(59, 130, 246, 0.2);
   }
+
+  /* Virtual keyboard support */
+  body.virtual-keyboard-active {
+    height: calc(100vh - var(--keyboard-height, 0px));
+    overflow: hidden;
+  }
+
+  /* Ensure inputs are properly visible when keyboard is active */
+  .virtual-keyboard-input {
+    transition: all 0.3s ease;
+  }
+
+  .virtual-keyboard-active .virtual-keyboard-input:focus {
+    transform: translateY(-10px);
+    z-index: 100;
+  }
+
+  /* Settings view adjustments for virtual keyboard */
+  .virtual-keyboard-active .settings-content {
+    max-height: calc(100vh - var(--keyboard-height, 0px) - 2rem);
+    padding-bottom: 2rem;
+  }
+
+  /* Adjust main content areas when keyboard is active */
+  .virtual-keyboard-active main {
+    max-height: calc(100vh - var(--keyboard-height, 0px) - 140px); /* Account for header */
+  }
+
+  /* Focus management for inputs */
+  .virtual-keyboard-input:focus {
+    position: relative;
+    z-index: 1000;
+  }
 }
 
 @layer components {

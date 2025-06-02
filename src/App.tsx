@@ -3,6 +3,7 @@ import SettingsView from './components/SettingsView'
 import SlideshowView from './components/SlideshowView'
 import WelcomeScreen from './components/WelcomeScreen'
 import WebOSLifecycle from './components/WebOSLifecycle'
+import VirtualKeyboardHandler from './components/VirtualKeyboardHandler'
 import { useAppStore } from './stores/appStore'
 import { useSettingsStore } from './stores/settingsStore'
 import ExitConfirmModal from './components/ExitConfirmModal'
@@ -88,24 +89,26 @@ function App() {
   return (
     <div className="h-screen w-screen overflow-hidden bg-dark-bg text-dark-text">
       <WebOSLifecycle />
-      {hasNoSources && !userRequestedSettings ? (
-        <WelcomeScreen onSetupPhotoSources={handleSetupPhotoSources} />
-      ) : currentMode === 'settings' ? (
-        <SettingsView 
-          onStartSlideshow={handleStartSlideshow} 
-          initialEditingSource={shouldStartWithAddSource ? null : undefined}
-          onRootStateChange={handleSettingsRootChange}
-        />
-      ) : (
-        <SlideshowView onExit={handleExitSlideshow} />
-      )}
-      
-      {showExitConfirm && (
-        <ExitConfirmModal
-          onConfirm={handleExitApp}
-          onCancel={handleCancelExit}
-        />
-      )}
+      <VirtualKeyboardHandler>
+        {hasNoSources && !userRequestedSettings ? (
+          <WelcomeScreen onSetupPhotoSources={handleSetupPhotoSources} />
+        ) : currentMode === 'settings' ? (
+          <SettingsView 
+            onStartSlideshow={handleStartSlideshow} 
+            initialEditingSource={shouldStartWithAddSource ? null : undefined}
+            onRootStateChange={handleSettingsRootChange}
+          />
+        ) : (
+          <SlideshowView onExit={handleExitSlideshow} />
+        )}
+        
+        {showExitConfirm && (
+          <ExitConfirmModal
+            onConfirm={handleExitApp}
+            onCancel={handleCancelExit}
+          />
+        )}
+      </VirtualKeyboardHandler>
     </div>
   )
 }
