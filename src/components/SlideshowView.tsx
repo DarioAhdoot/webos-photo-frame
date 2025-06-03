@@ -6,6 +6,7 @@ import { useCachedPhotoLoader } from '../hooks/useCachedPhotoLoader'
 import { photoSourceManager } from '../services/PhotoSourceManager'
 import PhotoDisplay from './PhotoDisplay'
 import MetadataOverlay from './MetadataOverlay'
+import TimeWeatherBox from './TimeWeatherBox'
 import FloatingSettingsButton from './FloatingSettingsButton'
 import OfflineIndicator from './OfflineIndicator'
 import MagicRemoteHandler from './MagicRemoteHandler'
@@ -207,12 +208,17 @@ export default function SlideshowView({ onExit }: SlideshowViewProps) {
         isPaused={isPaused}
       />
       
-      {(settings.display.showMetadata || settings.display.showTime) && (
-        <MetadataOverlay 
-          photo={currentPhoto}
-          showWeather={settings.display.showWeather}
+      {/* Time and Weather Box - Top Right */}
+      {(settings.display.showTime || settings.display.showWeather) && (
+        <TimeWeatherBox 
           showTime={settings.display.showTime}
+          showWeather={settings.display.showWeather}
         />
+      )}
+      
+      {/* Photo Metadata - Bottom Left */}
+      {settings.display.showMetadata && (
+        <MetadataOverlay photo={currentPhoto} />
       )}
       
       <FloatingSettingsButton onOpenSettings={onExit} />

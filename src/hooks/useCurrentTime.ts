@@ -11,7 +11,7 @@ export function useCurrentTime(enabled: boolean = true): CurrentTime {
     const now = new Date()
     return {
       time: now.toLocaleTimeString('en-US', {
-        hour: '2-digit',
+        hour: 'numeric',
         minute: '2-digit',
         hour12: true,
       }),
@@ -46,7 +46,7 @@ export function useCurrentTime(enabled: boolean = true): CurrentTime {
       const now = new Date()
       setCurrentTime({
         time: now.toLocaleTimeString('en-US', {
-          hour: '2-digit',
+          hour: 'numeric',
           minute: '2-digit',
           hour12: true,
         }),
